@@ -1,0 +1,25 @@
+<section class="learning-children" aria-labelledby="children-heading">
+  <h2 class="section-title" id="children-heading">{{ child_label }}</h2>
+  {% if children_empty %}
+    {% include "components/empty_state.html" with title="Nothing here yet" message="No published items are available in this section." %}
+  {% else %}
+    <ul class="learning-child-list">
+      {% for child in children %}
+        <li class="learning-child-item">
+          <a class="learning-child-link" href="{{ child.href }}">
+            <span class="learning-child-title">{{ child.title }}</span>
+            {% if child.completed %}
+              <span class="status-badge" data-tone="success">Completed</span>
+            {% endif %}
+            {% if child.locked %}
+              <span class="status-badge" data-tone="warning">Locked</span>
+            {% endif %}
+          </a>
+          {% if child.summary %}
+            <p class="learning-child-summary">{{ child.summary|truncatechars:180 }}</p>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</section>

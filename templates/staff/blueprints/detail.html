@@ -1,0 +1,72 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ blueprint.name }} — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:blueprints' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Blueprints" current_label=blueprint.name aria_label="Blueprints" %}
+<header class="page-header">
+  <h1>{{ blueprint.name }}</h1>
+  <p class="tagline">{{ blueprint.source_authority }} · {{ blueprint.version_label }} · total {{ blueprint.total_questions }}</p>
+  <p class="page-header-actions">
+    <a class="btn btn-ghost" href="{% url 'staff:blueprints' %}">Back to blueprints</a>
+  </p>
+</header>
+
+<section aria-labelledby="gen">
+  <h2 id="gen">Generation readiness</h2>
+  {% if plan.compliant %}
+  <p><strong>BLUEPRINT COMPLIANT</strong> — the published pool can satisfy this blueprint.</p>
+  {% else %}
+  <p><strong>INSUFFICIENT QUESTION POOL</strong> — no exam is generated. Fix the shortages below (no silent substitution).</p>
+  <ul>{% for s in plan.shortages %}<li>{{ s }}</li>{% endfor %}</ul>
+  {% endif %}
+</section>
+
+<section aria-labelledby="cats">
+  <h2 id="cats">Categories</h2>
+  <div class="table-wrap" role="region" aria-label="Categories" tabindex="0">
+    <table class="data-table">
+      <thead><tr><th scope="col">Category</th><th scope="col">%</th><th scope="col">Required</th><th scope="col">Available</th></tr></thead>
+      <tbody>
+        {% for cp in plan.category_plans %}
+        <tr>
+          <td>{{ cp.category_name }}</td>
+          <td>{% for c in categories %}{% if c.code == cp.category_code %}{{ c.percent }}%{% endif %}{% endfor %}</td>
+          <td>{{ cp.required }}</td>
+          <td>{{ cp.available }}{% if not cp.satisfied %} (short {{ cp.shortfall }}){% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section aria-labelledby="cog">
+  <h2 id="cog">Cognitive distribution</h2>
+  <div class="table-wrap" role="region" aria-label="Cognitive" tabindex="0">
+    <table class="data-table">
+      <thead><tr><th scope="col">Level</th><th scope="col">Target</th><th scope="col">Available</th></tr></thead>
+      <tbody>
+        {% for gp in plan.cognitive_plans %}
+        <tr>
+          <td>{{ gp.cognitive_level }}</td>
+          <td>{{ gp.target }}</td>
+          <td>{{ gp.available }}{% if not gp.satisfied %} (short {{ gp.shortfall }}){% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section aria-labelledby="comp">
+  <h2 id="comp">Competencies</h2>
+  {% for c in categories %}
+  <h3>{{ c.name }} ({{ c.question_count }})</h3>
+  <ul>
+    {% for comp in c.competencies.all %}
+    <li>{{ comp.number }}. {{ comp.text }} — {{ comp.question_count }}</li>
+    {% endfor %}
+  </ul>
+  {% endfor %}
+</section>
+{% endblock %}

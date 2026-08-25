@@ -1,0 +1,16 @@
+{% extends "layouts/student.html" %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block content %}
+  {% include "learning/partials/breadcrumbs.html" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  {% if summary %}
+    <p class="page-lede">{{ summary }}</p>
+  {% endif %}
+  {% include "learning/partials/progress.html" %}
+  {% if practice_href %}
+    <div class="action-row">
+      <a class="btn btn-secondary" href="{{ practice_href }}">Practice this course</a>
+    </div>
+  {% endif %}
+  {% include "learning/partials/child_list.html" %}
+{% endblock %}

@@ -1,0 +1,58 @@
+/* Nursilo design tokens — semantic roles from docs/12 (clinical teal / cool neutrals). */
+:root {
+  --color-primary: #0f6e6e;
+  --color-primary-hover: #0c5959;
+  --color-secondary: #2f4a5a;
+  --color-accent: #c9a227;
+  --color-background: #f4f7f8;
+  --color-background-soft: #e8f1f1;
+  --color-surface: #ffffff;
+  --color-elevated: #ffffff;
+  --color-text-primary: #142028;
+  --color-text-secondary: #3d4f5c;
+  --color-text-muted: #5f7382;
+  --color-border: #c9d4db;
+  --color-divider: #e2e8ec;
+  --color-success: #1f7a4c;
+  --color-warning: #9a6b12;
+  --color-danger: #a33b3b;
+  --color-info: #1f5f8b;
+  --color-disabled: #8a9aa5;
+  --color-premium: #8a6d1d;
+  --color-free: #3d4f5c;
+  --color-focus: #0f6e6e;
+
+  --font-sans: "Segoe UI", "Noto Sans Bengali", "Noto Sans", system-ui, sans-serif;
+  --font-display: "Segoe UI", "Noto Sans Bengali", "Noto Sans", system-ui, sans-serif;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 2.5rem;
+  --space-8: 3rem;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --measure: 42rem;
+  --shell-max: 72rem;
+
+  --shadow-elevated: 0 1px 2px rgba(20, 32, 40, 0.08);
+  --shadow-soft: 0 8px 24px rgba(15, 110, 110, 0.06);
+
+  --motion-fast: 120ms;
+  --motion-base: 180ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

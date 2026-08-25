@@ -1,0 +1,11 @@
+{% extends "layouts/auth.html" %}
+{% block title %}Sign out — Nursilo{% endblock %}
+{% block content %}
+{% include "components/back_link.html" %}
+<h1 class="page-title">Sign out</h1>
+<p class="page-lede">End your current session on this device?</p>
+<form method="post" action="{% url 'accounts:logout' %}" class="form-stack">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-primary">Sign out</button>
+</form>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "layouts/student.html" %}
+{% load static %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/assessment.css' %}">
+{% endblock %}
+{% block content %}
+  <header class="page-header">
+    <h1 class="page-title">{{ page_heading }}</h1>
+  </header>
+
+  <div class="action-row">
+    <a class="btn btn-primary" href="{{ catalog_href }}">Exam catalog</a>
+  </div>
+
+  <section aria-labelledby="history-heading">
+    <h2 class="section-title" id="history-heading">Your attempts</h2>
+    {% if is_empty %}
+      {% include "components/empty_state.html" with title="No exam attempts yet" message="Completed and in-progress exams will appear here." %}
+    {% else %}
+      <ul class="practice-list">
+        {% for item in items %}
+          <li class="practice-list-item">
+            <h3 class="practice-list-title">
+              <a href="{{ item.href }}">{{ item.title }}</a>
+            </h3>
+            <p class="tagline">
+              {{ item.state }}
+              {% if item.score_summary.score is not None and item.state == "completed" %}
+                · Score {{ item.score_summary.score }}/{{ item.score_summary.total }}
+              {% endif %}
+            </p>
+            <a class="btn btn-secondary" href="{{ item.href }}">Open</a>
+          </li>
+        {% endfor %}
+      </ul>
+      {% if has_prev or has_next %}
+        <nav class="pagination" aria-label="Exam history pages">
+          {% if has_prev %}
+            <a class="btn btn-secondary" href="{{ prev_href }}">Previous</a>
+          {% endif %}
+          <span>Page {{ page }} of {{ total_pages }}</span>
+          {% if has_next %}
+            <a class="btn btn-secondary" href="{{ next_href }}">Next</a>
+          {% endif %}
+        </nav>
+      {% endif %}
+    {% endif %}
+  </section>
+{% endblock %}

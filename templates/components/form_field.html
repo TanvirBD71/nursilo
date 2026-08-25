@@ -1,0 +1,17 @@
+{# Expects: field, optional show_optional #}
+<div class="form-field{% if field.errors %} form-field--invalid{% endif %}">
+  <label for="{{ field.id_for_label }}">
+    {{ field.label }}
+    {% if field.field.required %}
+      <span class="field-required" aria-hidden="true">*</span>
+      <span class="visually-hidden">(required)</span>
+    {% elif show_optional %}
+      <span class="field-optional">(optional)</span>
+    {% endif %}
+  </label>
+  {{ field }}
+  {% if field.help_text %}<p class="tagline">{{ field.help_text }}</p>{% endif %}
+  {% if field.errors %}
+    <p class="field-error" role="alert" id="{{ field.id_for_label }}-error">{{ field.errors|striptags }}</p>
+  {% endif %}
+</div>

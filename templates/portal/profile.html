@@ -1,0 +1,111 @@
+{% extends "layouts/student.html" %}
+{% block title %}Profile — Nursilo{% endblock %}
+{% block content %}
+{% url 'portal:dashboard' as parent_href %}
+{% include "components/back_link.html" with back_href=parent_href back_label="dashboard" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Your account identity and academic details.</p>
+
+  <section class="dashboard-card section" aria-labelledby="identity-heading">
+    <h2 class="section-title" id="identity-heading">Identity</h2>
+    <dl class="profile-dl">
+      <div>
+        <dt>Full name</dt>
+        <dd>{{ request.user.full_name|default:"—" }}</dd>
+      </div>
+      <div>
+        <dt>Email</dt>
+        <dd>{{ request.user.email }}</dd>
+      </div>
+      <div>
+        <dt>Email verification</dt>
+        <dd>
+          {% if request.user.is_email_verified %}
+            {% include "components/status_badge.html" with label="Verified" tone="success" %}
+          {% else %}
+            {% include "components/status_badge.html" with label="Not verified" tone="warning" %}
+          {% endif %}
+        </dd>
+      </div>
+      <div>
+        <dt>Interface language</dt>
+        <dd>{{ locale_label }}</dd>
+      </div>
+      <div>
+        <dt>Mobile number</dt>
+        <dd>{% if academic %}{{ academic.mobile_number|default:"—" }}{% else %}—{% endif %}</dd>
+      </div>
+      <div>
+        <dt>Blood group</dt>
+        <dd>{% if academic %}{{ academic.blood_group|default:"—" }}{% else %}—{% endif %}</dd>
+      </div>
+      <div>
+        <dt>Academic session</dt>
+        <dd>{% if academic %}{{ academic.academic_session|default:"—" }}{% else %}—{% endif %}</dd>
+      </div>
+      <div>
+        <dt>Address</dt>
+        <dd>{% if academic %}{{ academic.address|default:"—" }}{% else %}—{% endif %}</dd>
+      </div>
+      <div>
+        <dt>Social media</dt>
+        <dd>{% if academic and academic.social_profile_url %}<a href="{{ academic.social_profile_url }}">{{ academic.social_profile_url }}</a>{% else %}—{% endif %}</dd>
+      </div>
+      <div>
+        <dt>LinkedIn</dt>
+        <dd>{% if academic and academic.linkedin_url %}<a href="{{ academic.linkedin_url }}">{{ academic.linkedin_url }}</a>{% else %}—{% endif %}</dd>
+      </div>
+      <div>
+        <dt>Account status</dt>
+        <dd>{% if request.user.is_active %}Active{% else %}Unavailable{% endif %}</dd>
+      </div>
+    </dl>
+    <div class="action-row">
+      <a class="btn btn-primary" href="{% url 'portal:profile_edit' %}">Edit profile</a>
+      {% if not request.user.is_email_verified %}
+        <a class="btn btn-secondary" href="{% url 'accounts:resend_verification' %}">Verify email</a>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="dashboard-card section" aria-labelledby="academic-heading">
+    <h2 class="section-title" id="academic-heading">Academic profile</h2>
+    {% if academic %}
+      <dl class="profile-dl">
+        <div>
+          <dt>Program</dt>
+          <dd>{{ academic.academic_program|default:"—" }}</dd>
+        </div>
+        <div>
+          <dt>Institution</dt>
+          <dd>{{ academic.institution|default:"—" }}</dd>
+        </div>
+        <div>
+          <dt>Semester / year</dt>
+          <dd>{{ academic.current_semester_year|default:"—" }}</dd>
+        </div>
+        <div>
+          <dt>Expected graduation year</dt>
+          <dd>{{ academic.expected_graduation_year|default:"—" }}</dd>
+        </div>
+        <div>
+          <dt>Study goal</dt>
+          <dd>{{ academic.current_study_goal|default:"—" }}</dd>
+        </div>
+      </dl>
+    {% else %}
+      {% include "components/empty_state.html" with title="No academic profile" message="Add your academic details when you are ready." %}
+    {% endif %}
+    <div class="action-row">
+      <a class="btn btn-secondary" href="{% url 'portal:academic_profile_edit' %}">Edit academic profile</a>
+    </div>
+  </section>
+
+  <section class="dashboard-card section" aria-labelledby="security-heading">
+    <h2 class="section-title" id="security-heading">Security shortcuts</h2>
+    <div class="action-row">
+      <a class="btn btn-secondary" href="{% url 'accounts:password_change' %}">Change password</a>
+      <a class="btn btn-secondary" href="{% url 'accounts:devices' %}">Devices</a>
+    </div>
+  </section>
+{% endblock %}

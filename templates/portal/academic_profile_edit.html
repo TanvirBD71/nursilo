@@ -1,0 +1,24 @@
+{% extends "layouts/student.html" %}
+{% block title %}Edit academic profile — Nursilo{% endblock %}
+{% block content %}
+{% url 'portal:profile' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Profile" current_label=page_heading aria_label="Profile" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Optional academic details used for your learner profile.</p>
+
+  <form method="post" action="{% url 'portal:academic_profile_edit' %}" class="form-stack" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="form-errors" role="alert">{{ form.non_field_errors }}</div>
+    {% endif %}
+    {% include "components/form_field.html" with field=form.academic_program %}
+    {% include "components/form_field.html" with field=form.institution %}
+    {% include "components/form_field.html" with field=form.current_semester_year %}
+    {% include "components/form_field.html" with field=form.expected_graduation_year %}
+    {% include "components/form_field.html" with field=form.current_study_goal %}
+    <div class="action-row">
+      <button type="submit" class="btn btn-primary">Save academic profile</button>
+      <a class="btn btn-secondary" href="{% url 'portal:profile' %}">Cancel</a>
+    </div>
+  </form>
+{% endblock %}

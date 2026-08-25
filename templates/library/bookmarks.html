@@ -1,0 +1,36 @@
+{% extends "layouts/student.html" %}
+{% load static %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/library.css' %}">
+{% endblock %}
+{% block content %}
+  {% include "library/partials/breadcrumbs.html" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Your saved books. Bookmarks are private to your account.</p>
+  <p><a class="btn btn-secondary" href="{% url 'library:catalog' %}">Back to catalog</a></p>
+
+  {% if is_empty %}
+    {% include "components/empty_state.html" with title="No bookmarks yet" message="Bookmark a published book from its detail or reader page to find it here." %}
+  {% else %}
+    <ul class="library-catalog-list">
+      {% for book in books %}
+        <li class="library-catalog-item">
+          <h2 class="section-title"><a href="{{ book.href }}">{{ book.title }}</a></h2>
+          {% if book.author_name %}<p class="library-meta">{{ book.author_name }}</p>{% endif %}
+          <p>
+            <a class="btn btn-primary" href="{{ book.href }}">Open</a>
+            {% if book.can_read %}
+              <a class="btn btn-secondary" href="{{ book.reader_href }}">Read</a>
+            {% endif %}
+          </p>
+          <form method="post" action="{% url 'library:bookmark_toggle' book_id=book.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'library:bookmarks' %}">
+            <button type="submit" class="btn btn-secondary">Remove bookmark</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

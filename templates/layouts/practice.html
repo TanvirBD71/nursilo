@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block body_class %}layout-shell layout-practice{% endblock %}
+{% block header %}
+  <header class="practice-shell-header">
+    <div class="practice-shell-inner">
+      {% url 'assessment:entry' as brand_href %}
+      {% include "components/site_brand.html" with brand_href=brand_href %}
+      <p class="practice-shell-tagline">Practice session</p>
+      <a class="btn btn-secondary" href="{% url 'assessment:entry' %}">Exit to practice home</a>
+    </div>
+  </header>
+{% endblock %}
+{% block footer %}
+  <footer class="practice-shell-footer">
+    <div class="practice-shell-inner">
+      <p>Answers are saved on the server. Scoring happens after you submit.</p>
+    </div>
+  </footer>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "layouts/student.html" %}
+{% load static %}
+{% block title %}{{ title }} — Nursilo{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/assessment.css' %}">
+{% endblock %}
+{% block content %}
+  <nav class="breadcrumb-nav page-context" aria-label="Exams">
+    <ol class="breadcrumb-list">
+      <li class="breadcrumb-item"><a href="{{ catalog_href }}">Exam catalog</a></li>
+      <li class="breadcrumb-item"><span aria-current="page">{{ title }}</span></li>
+    </ol>
+  </nav>
+  <header class="page-header">
+    <h1 class="page-title">{{ title }}</h1>
+    <p class="tagline">{{ mode_label }} · {{ question_count }} questions</p>
+  </header>
+
+  <section class="exam-detail-meta" aria-labelledby="exam-status-heading">
+    <h2 class="section-title" id="exam-status-heading">Status</h2>
+    <p>
+      <span class="exam-state exam-state-{{ state }}">{{ state_label }}</span>
+    </p>
+    <p class="tagline">{{ message }}</p>
+    <dl class="profile-dl">
+      <div>
+        <dt>Timing</dt>
+        <dd>
+          {% if is_timed %}
+            {{ time_limit_seconds }} seconds (server-authoritative)
+          {% else %}
+            Untimed
+          {% endif %}
+        </dd>
+      </div>
+      {% if track_code %}
+        <div>
+          <dt>Track</dt>
+          <dd>{{ track_code }}</dd>
+        </div>
+      {% endif %}
+      <div>
+        <dt>Completed attempts</dt>
+        <dd>{{ completed_count }}</dd>
+      </div>
+      {% if requires_premium %}
+        <div>
+          <dt>Entitlement</dt>
+          <dd>{% if entitled %}Premium active{% else %}Premium required{% endif %}</dd>
+        </div>
+      {% endif %}
+    </dl>
+  </section>
+
+  <div class="action-row">
+    {% if can_resume and resume_href %}
+      <a class="btn btn-primary" href="{{ resume_href }}">Resume exam</a>
+    {% elif can_start %}
+      <a class="btn btn-primary" href="{{ start_href }}">Start exam</a>
+    {% endif %}
+    <a class="btn btn-secondary" href="{{ catalog_href }}">Back to catalog</a>
+    <a class="btn btn-secondary" href="{{ history_href }}">History</a>
+  </div>
+{% endblock %}

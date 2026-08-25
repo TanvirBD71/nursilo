@@ -1,0 +1,91 @@
+{% load static %}
+<ol class="review-list">
+  {% for item in items %}
+    <li class="review-item" data-outcome="{{ item.outcome }}">
+      <div class="review-item-head">
+        <h2 class="review-item-title" id="review-q-{{ item.position }}">Question {{ item.position }}</h2>
+        <span class="outcome-badge outcome-{{ item.outcome }}">
+          <span class="outcome-badge-icon" aria-hidden="true">
+            {% if item.outcome == "correct" %}
+              {% include "components/icon.html" with name="check-circle" size="sm" %}
+            {% elif item.outcome == "incorrect" %}
+              {% include "components/icon.html" with name="close-circle" size="sm" %}
+            {% else %}
+              {% include "components/icon.html" with name="minus-circle" size="sm" %}
+            {% endif %}
+          </span>
+          <span class="outcome-badge-label">{{ item.outcome_label }}</span>
+        </span>
+      </div>
+
+      {% if item.clinical_scenario_body %}
+        <div class="clinical-scenario reading-measure">{{ item.clinical_scenario_body|linebreaks }}</div>
+      {% endif %}
+      <div class="question-stem reading-measure">{{ item.stem|linebreaks }}</div>
+
+      {% if item.is_true_false %}
+      <ul class="review-options" aria-label="True/False statements">
+        {% for statement in item.statements %}
+          <li class="review-option
+            {% if statement.is_correct %}is-correct{% elif statement.selected is not None %}is-wrong{% endif %}">
+            <span class="review-option-body">
+              <span class="option-key">{{ statement.key }}.</span>
+              <span class="review-option-label">{{ statement.text }}</span>
+              {% if statement.show_correctness %}
+                <span class="review-option-tag review-option-tag--correct">Answer: {{ statement.correct|yesno:"True,False,—" }}</span>
+              {% endif %}
+              {% if statement.selected is not None %}
+                <span class="review-option-tag review-option-tag--selected">You: {{ statement.selected|yesno:"True,False" }}</span>
+              {% else %}
+                <span class="review-option-tag">Unanswered</span>
+              {% endif %}
+            </span>
+          </li>
+        {% endfor %}
+      </ul>
+      <p class="review-score-line">Marks: {{ item.points }} / {{ item.max_points }}</p>
+      {% else %}
+      <ul class="review-options" aria-label="Answer options">
+        {% for option in item.options %}
+          <li class="review-option
+            {% if option.selected %}is-selected{% endif %}
+            {% if option.show_correctness and option.is_correct %}is-correct{% endif %}
+            {% if option.show_correctness and option.selected and not option.is_correct %}is-wrong{% endif %}">
+            <span class="review-option-marker" aria-hidden="true">
+              {% if option.show_correctness and option.is_correct %}
+                {% include "components/icon.html" with name="check" size="sm" %}
+              {% elif option.show_correctness and option.selected and not option.is_correct %}
+                {% include "components/icon.html" with name="close" size="sm" %}
+              {% elif option.selected %}
+                {% include "components/icon.html" with name="minus-circle" size="sm" %}
+              {% endif %}
+            </span>
+            <span class="review-option-body">
+              <span class="option-key">{{ option.key }}.</span>
+              <span class="review-option-label">{{ option.label }}</span>
+              {% if option.show_correctness and option.is_correct %}
+                <span class="review-option-tag review-option-tag--correct">Correct answer</span>
+              {% endif %}
+              {% if option.selected %}
+                <span class="review-option-tag review-option-tag--selected">Your answer</span>
+              {% endif %}
+            </span>
+          </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      {% if item.explanation %}
+        <div class="explanation-panel reading-measure">
+          <h3 class="explanation-title">
+            <span class="explanation-title-icon" aria-hidden="true">{% include "components/icon.html" with name="book" size="sm" %}</span>
+            Explanation
+          </h3>
+          <div class="explanation-body">{{ item.explanation|linebreaks }}</div>
+        </div>
+      {% endif %}
+    </li>
+  {% empty %}
+    {% include "components/empty_state.html" with title="Nothing to review" message="No review items are available for this attempt." %}
+  {% endfor %}
+</ol>

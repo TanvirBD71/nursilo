@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body_class %}layout-shell layout-student{% endblock %}
+{% block header %}
+  <div class="app-chrome" data-chrome>
+    {% include "partials/student_header.html" %}
+    {% include "partials/student_nav.html" %}
+  </div>
+{% endblock %}
+{% block footer %}
+  {% include "partials/student_footer.html" %}
+{% endblock %}
+{% block extra_body %}{% endblock %}

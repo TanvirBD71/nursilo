@@ -1,0 +1,87 @@
+{% extends "layouts/staff.html" %}
+{% block title %}Import questions — Nursilo Staff{% endblock %}
+{% block content %}
+{% include "components/breadcrumbs.html" with breadcrumbs=import_breadcrumbs aria_label="Import" %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="page-lede">Bulk-load a staff-prepared .xlsx workbook. Preview first, then confirm to import transactionally. Invalid workbooks write nothing.</p>
+  <p class="page-header-actions">
+    <a class="btn btn-ghost" href="{% url 'staff:questions' %}">Back to question bank</a>
+    <a class="btn btn-secondary" href="{% url 'staff:questions_import_template' %}">Download original template</a>
+    <a class="btn btn-secondary" href="{% url 'staff:questions_import_template_author' %}">Download author-friendly template</a>
+    <a class="btn btn-ghost" href="{% url 'staff:questions_import_history' %}">Import history</a>
+  </p>
+</header>
+
+<section class="staff-action-card" aria-labelledby="upload">
+  <h2 id="upload">Upload workbook</h2>
+  <form method="post" enctype="multipart/form-data" class="staff-form">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <p>{{ form.file.label_tag }} {{ form.file }} {{ form.file.errors }}</p>
+    <p class="filter-actions">
+      <button type="submit" class="btn btn-primary">Preview</button>
+      {% if preview and preview.importable or has_stash %}
+      <label class="filter-check">{{ form.confirm }} Confirm import{% if preview %} ({{ preview.valid }} new){% endif %}</label>
+      {% endif %}
+    </p>
+  </form>
+  <p class="tagline">The original template remains valid. After preview, confirm without re-attaching the file. Invalid workbooks write nothing.</p>
+</section>
+
+{% if report %}
+<section class="staff-action-card" aria-labelledby="report">
+  <h2 id="report">Import complete</h2>
+  <p>Created {{ report.created }}; skipped {{ report.skipped_duplicate }} duplicate(s); needs review {{ report.needs_review }}.</p>
+</section>
+{% endif %}
+
+{% if preview %}
+<section class="staff-action-card" aria-labelledby="preview">
+  <h2 id="preview">Preview</h2>
+  <ul>
+    <li>Total rows: {{ preview.total }}</li>
+    <li>Valid (new): {{ preview.valid }}</li>
+    <li>Duplicate (skipped): {{ preview.duplicate }}</li>
+    <li>Invalid: {{ preview.invalid }}</li>
+    <li>Needs review: {{ preview.needs_review }}</li>
+  </ul>
+  {% if preview.type_counts %}<p>Types: {% for k,v in preview.type_counts.items %}{{ k }}={{ v }} {% endfor %}</p>{% endif %}
+  {% if preview.blueprint_counts %}<p>Categories: {% for k,v in preview.blueprint_counts.items %}{{ k }}={{ v }} {% endfor %}</p>{% endif %}
+  {% if preview.cognitive_counts %}<p>Cognitive: {% for k,v in preview.cognitive_counts.items %}{{ k }}={{ v }} {% endfor %}</p>{% endif %}
+  {% if preview.subject_counts %}<p>Subjects: {% for k,v in preview.subject_counts.items %}{{ k }}={{ v }} {% endfor %}</p>{% endif %}
+  {% if preview.source_counts %}<p>Sources: {% for k,v in preview.source_counts.items %}{{ k }}={{ v }} {% endfor %}</p>{% endif %}
+  {% if preview.display_errors %}
+  <h3>Errors (block import)</h3>
+  <ul>{% for e in preview.display_errors %}<li>{{ e }}</li>{% endfor %}</ul>
+  {% if preview.hidden_error_count %}<p class="tagline">{{ preview.hidden_error_count }} more error(s) omitted from this page.</p>{% endif %}
+  {% endif %}
+  {% if preview.display_warnings %}
+  <h3>Warnings</h3>
+  <ul>{% for w in preview.display_warnings %}<li>{{ w }}</li>{% endfor %}</ul>
+  {% if preview.hidden_warning_count %}<p class="tagline">{{ preview.hidden_warning_count }} more warning(s) omitted from this page.</p>{% endif %}
+  {% endif %}
+  {% if preview.display_rows %}
+  <h3>Rows needing attention first</h3>
+  <p class="tagline">Showing {{ preview.display_rows|length }} of {{ preview.total }} row(s). Invalid and warning rows are listed first.</p>
+  <div class="table-wrap" role="region" aria-label="Import preview rows" tabindex="0">
+    <table class="data-table">
+      <thead><tr><th scope="col">Row</th><th scope="col">Code</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Notes</th></tr></thead>
+      <tbody>
+        {% for row in preview.display_rows %}
+        <tr>
+          <td>{{ row.index }}</td>
+          <td>{{ row.question_code }}</td>
+          <td>{{ row.question_type }}</td>
+          <td>{{ row.status }}</td>
+          <td>{% for e in row.errors %}{{ e }} {% endfor %}{% for w in row.warnings %}{{ w }} {% endfor %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if preview.hidden_row_count %}<p class="tagline">{{ preview.hidden_row_count }} additional row(s) omitted to keep this page small.</p>{% endif %}
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}

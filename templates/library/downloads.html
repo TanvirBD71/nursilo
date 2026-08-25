@@ -1,0 +1,32 @@
+{% extends "layouts/student.html" %}
+{% load static %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/library.css' %}">
+{% endblock %}
+{% block content %}
+  {% include "library/partials/breadcrumbs.html" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Downloads only appear for books your subscription currently allows. Direct storage keys never grant access.</p>
+  <p><a class="btn btn-secondary" href="{% url 'library:catalog' %}">Back to catalog</a></p>
+
+  {% if is_empty %}
+    {% include "components/empty_state.html" with title="No downloads available" message="Entitled published books with assets will appear here. Premium-only titles stay hidden from Free downloads." %}
+  {% else %}
+    <ul class="library-catalog-list">
+      {% for book in books %}
+        <li class="library-catalog-item">
+          <h2 class="section-title"><a href="{{ book.href }}">{{ book.title }}</a></h2>
+          <ul class="library-asset-list">
+            {% for asset in book.assets %}
+              <li>
+                <span class="library-meta">{{ asset.format|upper }}</span>
+                <a class="btn btn-secondary" href="{{ asset.download_href }}">Download</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

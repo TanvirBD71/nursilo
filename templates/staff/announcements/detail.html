@@ -1,0 +1,27 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:announcements' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Announcements" current_label=obj.code aria_label="Announcements" %}
+<header class="page-header">
+  <h1>{{ obj.code }}</h1>
+  <p>{% include "components/status_badge.html" with label=obj.editorial_state tone="info" %}</p>
+  <p class="page-header-actions">
+    <a class="btn btn-ghost" href="{% url 'staff:announcements' %}">Back to announcements</a>
+  </p>
+</header>
+{% with t=obj.translations.all|first %}
+  <h2>{{ t.title }}</h2>
+  <p>{{ t.body }}</p>
+{% endwith %}
+{% if actions %}
+<form method="post" class="staff-form">
+  {% csrf_token %}
+  <select name="action" aria-label="Workflow action">{% for a in actions %}<option value="{{ a }}">{{ a }}</option>{% endfor %}</select>
+  <textarea name="notes" rows="2" aria-label="Notes"></textarea>
+  <div class="filter-actions">
+    <button type="submit" class="btn btn-primary">Apply workflow</button>
+  </div>
+</form>
+{% endif %}
+{% endblock %}

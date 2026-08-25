@@ -1,0 +1,42 @@
+{% extends "layouts/student.html" %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block content %}
+  <header class="page-header">
+    <h1 class="page-title">{{ page_heading }}</h1>
+    <p class="tagline">Your own practice attempts only.</p>
+  </header>
+
+  <div class="action-row">
+    <a class="btn btn-primary" href="{{ setup_href }}">New practice</a>
+    <a class="btn btn-secondary" href="{{ entry_href }}">Practice home</a>
+  </div>
+
+  {% if is_empty %}
+    {% include "components/empty_state.html" with title="No practice history yet" message="Completed and in-progress practice attempts will appear here." %}
+  {% else %}
+    <ul class="practice-list">
+      {% for item in items %}
+        <li class="practice-list-item">
+          <h2 class="practice-list-title">
+            <a href="{{ item.href }}">{{ item.scope_label }}</a>
+          </h2>
+          <p class="tagline">
+            Status: {{ item.state }}
+            {% if item.score_summary.total %}
+              · Score {{ item.score_summary.score|default:0 }}/{{ item.score_summary.total }}
+              ({{ item.score_summary.percent_correct|default:0 }}%)
+            {% endif %}
+          </p>
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if has_prev or has_next %}
+      <nav class="action-row" aria-label="History pagination">
+        {% if has_prev %}<a class="btn btn-secondary" href="{{ prev_href }}">Previous</a>{% endif %}
+        <span class="tagline">Page {{ page }} of {{ total_pages }}</span>
+        {% if has_next %}<a class="btn btn-secondary" href="{{ next_href }}">Next</a>{% endif %}
+      </nav>
+    {% endif %}
+  {% endif %}
+{% endblock %}

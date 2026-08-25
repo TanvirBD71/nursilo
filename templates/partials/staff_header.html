@@ -1,0 +1,27 @@
+<header class="staff-header">
+  <div class="staff-header-inner">
+    <div class="staff-header-brand">
+      {% url 'staff:dashboard' as brand_href %}
+      {% include "components/site_brand.html" with brand_href=brand_href brand_text="Nursilo Staff" %}
+      <p class="tagline">Learn. Practice. Succeed.</p>
+    </div>
+    <div class="staff-header-utils">
+      <span class="tagline">{{ request.user.email }}</span>
+      <a class="header-util-link" href="{% url 'accounts:logout' %}">Sign out</a>
+      <button
+        type="button"
+        class="nav-toggle staff-nav-toggle"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="staff-primary-nav"
+        aria-label="Open menu"
+        data-closed-label="Open menu"
+        data-open-label="Close menu"
+      >
+        <span class="nav-toggle-icon nav-toggle-icon--menu" aria-hidden="true">{% include "components/icon.html" with name="menu" size="sm" %}</span>
+        <span class="nav-toggle-icon nav-toggle-icon--close" hidden aria-hidden="true">{% include "components/icon.html" with name="close" size="sm" %}</span>
+        <span data-nav-toggle-text>Menu</span>
+      </button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body_class %}layout-shell layout-auth{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+{% block shell %}
+<div class="auth-shell">
+  {% include "partials/auth_promo.html" %}
+  <div class="auth-stage">
+    <header class="layout-auth-header">
+      <div class="layout-auth-brand">
+        {% url 'home' as brand_href %}
+        {% include "components/site_brand.html" with brand_href=brand_href %}
+        <p class="tagline">Learn. Practice. Succeed.</p>
+      </div>
+    </header>
+    <main id="main-content" class="layout-main" tabindex="-1">
+      {% include "components/feedback_messages.html" %}
+      {% block content %}{% endblock %}
+    </main>
+    <footer class="layout-auth-footer">
+      <p>Secure account access for Nursilo learners.</p>
+    </footer>
+  </div>
+</div>
+{% endblock %}

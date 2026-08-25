@@ -1,0 +1,55 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="page-header-actions">
+    <a class="btn btn-primary" href="{% url 'staff:cms_page_create' %}">Create page</a>
+    <a class="btn btn-secondary" href="{% url 'staff:cms_post_create' %}">Create blog post</a>
+  </p>
+</header>
+<section class="staff-action-card">
+  <h2>Pages</h2>
+  <ul>
+    {% for page in pages %}
+      <li>
+        <a href="{% url 'staff:cms_page_detail' page.id %}">{{ page.code }}</a>
+        — {% include "components/status_badge.html" with label=page.editorial_state tone="info" %}
+      </li>
+    {% empty %}<li>No pages.</li>{% endfor %}
+  </ul>
+</section>
+<section class="staff-action-card">
+  <h2>Blog posts</h2>
+  <ul>
+    {% for post in posts %}
+      <li>
+        <a href="{% url 'staff:cms_post_detail' post.id %}">{{ post.code }}</a>
+        — {% include "components/status_badge.html" with label=post.editorial_state tone="info" %}
+      </li>
+    {% empty %}<li>No posts.</li>{% endfor %}
+  </ul>
+</section>
+{% if contacts %}
+<section class="staff-action-card">
+  <h2>Contact messages</h2>
+  <ul>
+    {% for msg in contacts %}
+      <li>
+        {{ msg.email }} — {{ msg.subject }} ({% include "components/status_badge.html" with label=msg.status tone="info" %})
+        <form method="post" action="{% url 'staff:cms_contact_update' msg.id %}" class="staff-inline-form">
+          {% csrf_token %}
+          <select name="status" aria-label="Status">
+            <option value="new">New</option>
+            <option value="in_progress">In progress</option>
+            <option value="resolved">Resolved</option>
+            <option value="closed">Closed</option>
+          </select>
+          <button type="submit" class="btn btn-secondary">Update</button>
+        </form>
+      </li>
+    {% empty %}<li>No messages.</li>{% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

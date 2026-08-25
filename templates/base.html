@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="{{ html_lang|default:'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Nursilo{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Nursilo — Learn. Practice. Succeed.{% endblock %}">
+  <link rel="icon" href="{% static 'img/favicon.ico' %}" sizes="any">
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'img/nursilo-logo.png' %}">
+  <link rel="stylesheet" href="{% static 'css/design-tokens.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/layouts.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}layout-shell{% endblock %}">
+  {% include "components/icon_sprite.html" %}
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  {% block shell %}
+    {% block header %}{% endblock %}
+    <main id="main-content" class="layout-main" tabindex="-1">
+      {% include "components/feedback_messages.html" %}
+      {% block content %}{% endblock %}
+    </main>
+    {% block footer %}{% endblock %}
+  {% endblock %}
+  <script src="{% static 'js/chrome.js' %}" defer></script>
+  {% block extra_body %}{% endblock %}
+</body>
+</html>

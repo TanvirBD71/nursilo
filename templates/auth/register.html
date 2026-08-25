@@ -1,0 +1,45 @@
+{% extends "layouts/auth.html" %}
+{% block title %}Register — Nursilo{% endblock %}
+{% block content %}
+{% include "components/back_link.html" %}
+<h1 class="page-title">Create account</h1>
+<p class="page-lede">Join Nursilo to learn structured nursing content, practice realistic questions, and prepare for your license exam.</p>
+<form method="post" action="{% url 'accounts:register' %}" class="form-stack form-stack--register" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="form-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+
+  <fieldset class="form-section">
+    <legend class="form-section-title">Account</legend>
+    <p class="tagline">Your sign-in details. Passwords are stored hashed, never in the browser.</p>
+    {% include "components/form_field.html" with field=form.full_name show_optional=True %}
+    {% include "components/form_field.html" with field=form.email %}
+    {% include "components/form_field.html" with field=form.password %}
+    {% include "components/form_field.html" with field=form.password_confirm %}
+  </fieldset>
+
+  <fieldset class="form-section">
+    <legend class="form-section-title">Personal</legend>
+    {% include "components/form_field.html" with field=form.mobile_number %}
+    {% include "components/form_field.html" with field=form.blood_group %}
+  </fieldset>
+
+  <fieldset class="form-section">
+    <legend class="form-section-title">Academic</legend>
+    {% include "components/form_field.html" with field=form.academic_session %}
+  </fieldset>
+
+  <fieldset class="form-section">
+    <legend class="form-section-title">Contact and social</legend>
+    <p class="tagline">Optional. Social accounts are never required.</p>
+    {% include "components/form_field.html" with field=form.address show_optional=True %}
+    {% include "components/form_field.html" with field=form.social_profile_url show_optional=True %}
+    {% include "components/form_field.html" with field=form.linkedin_url show_optional=True %}
+  </fieldset>
+
+  <button type="submit" class="btn btn-primary">Create account</button>
+</form>
+<p class="auth-links">
+  Already have an account?
+  <a href="{% url 'accounts:login' %}">Sign in</a>
+</p>
+{% endblock %}

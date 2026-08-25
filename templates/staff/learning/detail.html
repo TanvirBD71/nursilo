@@ -1,0 +1,72 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:learning' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Learning" current_label=page_heading aria_label="Learning" %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p>
+    {% include "components/status_badge.html" with label=obj.editorial_state tone="info" %}
+  </p>
+  <p class="page-header-actions">
+    <a class="btn btn-ghost" href="{% url 'staff:learning' %}">Back to learning</a>
+    <a class="btn btn-secondary" href="{% url 'staff:learning_preview' kind obj.id %}">Preview</a>
+  </p>
+</header>
+
+<section class="staff-action-card" aria-labelledby="edit-heading">
+  <h2 id="edit-heading">Edit</h2>
+  <form method="post" class="staff-form" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="edit" value="1">
+    {% for field in edit_form %}{% include "components/form_field.html" with field=field %}{% endfor %}
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+  </form>
+</section>
+
+<section class="staff-action-card" aria-labelledby="workflow-heading">
+  <h2 id="workflow-heading">Editorial workflow</h2>
+  {% if actions %}
+  <form method="post" class="staff-form">
+    {% csrf_token %}
+    <input type="hidden" name="workflow" value="1">
+    <label for="id_action">Action</label>
+    <select id="id_action" name="action" required>
+      {% for a in actions %}
+        <option value="{{ a }}">{{ a }}</option>
+      {% endfor %}
+    </select>
+    <label for="id_notes">Notes</label>
+    <textarea id="id_notes" name="notes" rows="2"></textarea>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Apply transition</button>
+    </div>
+  </form>
+  {% else %}
+  <p class="tagline">No transitions available for your role/state.</p>
+  {% endif %}
+</section>
+
+{% if child_kind %}
+<section class="staff-action-card" aria-labelledby="children-heading">
+  <h2 id="children-heading">Children ({{ child_kind }})</h2>
+  <p class="page-header-actions">
+    <a class="btn btn-secondary" href="{% url 'staff:learning_create' child_kind %}?parent={{ obj.id }}">Add {{ child_kind }}</a>
+  </p>
+  <ul>
+    {% for child in children %}
+      <li>
+        <a href="{% url 'staff:learning_detail' child_kind child.id %}">
+          {% with t=child.translations.all|first %}{{ t.title|default:child.id }}{% endwith %}
+        </a>
+        — {% include "components/status_badge.html" with label=child.editorial_state tone="info" %}
+      </li>
+    {% empty %}
+      <li>No children yet.</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

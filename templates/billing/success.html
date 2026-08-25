@@ -1,0 +1,42 @@
+{% extends "layouts/student.html" %}
+{% block title %}Payment successful — Nursilo{% endblock %}
+{% block content %}
+  <nav class="breadcrumb-nav page-context" aria-label="Billing">
+    <ol class="breadcrumb-list">
+      <li class="breadcrumb-item"><a href="{% url 'billing:pricing' %}">Pricing</a></li>
+      <li class="breadcrumb-item"><span aria-current="page">Payment successful</span></li>
+    </ol>
+  </nav>
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Payment verified on the server. Your Premium entitlement is active.</p>
+
+  <section class="dashboard-card section" aria-labelledby="success-detail">
+    <h2 class="section-title" id="success-detail">Confirmed</h2>
+    <p>
+      {% include "components/status_badge.html" with label="Premium" tone="premium" %}
+    </p>
+    <dl class="profile-dl">
+      <div>
+        <dt>Plan</dt>
+        <dd>{{ payment.plan_name }}</dd>
+      </div>
+      <div>
+        <dt>Amount</dt>
+        <dd>{{ payment.amount }} {{ payment.currency }}</dd>
+      </div>
+      <div>
+        <dt>Premium expires</dt>
+        <dd>{{ entitlement.premium_expires_at|default:"—" }}</dd>
+      </div>
+      <div>
+        <dt>Reference</dt>
+        <dd><code>{{ payment.gateway_ref }}</code></dd>
+      </div>
+    </dl>
+  </section>
+
+  <p>
+    <a class="btn btn-primary" href="{% url 'library:catalog' %}">Go to library</a>
+    <a class="btn btn-secondary" href="{% url 'billing:current' %}">View subscription</a>
+  </p>
+{% endblock %}

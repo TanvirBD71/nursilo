@@ -1,0 +1,81 @@
+{% extends "layouts/student.html" %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block content %}
+  <header class="page-header">
+    <h1 class="page-title">{{ page_heading }}</h1>
+    <p class="tagline">Choose a published learning scope. The server selects questions.</p>
+  </header>
+
+  <form method="post" action="{% url 'assessment:setup' %}" class="stack-form practice-setup-form" novalidate>
+    {% csrf_token %}
+
+    <fieldset class="form-fieldset">
+      <legend>Scope type</legend>
+      {% for value, label in form.scope_type.field.choices %}
+        <label class="choice-row">
+          <input type="radio" name="scope_type" value="{{ value }}"
+            {% if form.scope_type.value == value %}checked{% endif %}
+            {% if not form.scope_type.value and value == "topic" %}checked{% endif %}>
+          <span>{{ label }}</span>
+        </label>
+      {% endfor %}
+      {% if form.scope_type.errors %}
+        <p class="field-error" role="alert">{{ form.scope_type.errors|striptags }}</p>
+      {% endif %}
+    </fieldset>
+
+    <div class="form-field">
+      <label for="id_scope_id">Scope item</label>
+      <select name="scope_id" id="id_scope_id">
+        <option value="">— Select when not using Random —</option>
+        <optgroup label="Topics">
+          {% for item in topic_choices %}
+            <option value="{{ item.id }}" {% if form.scope_id.value|stringformat:"s" == item.id|stringformat:"s" %}selected{% endif %}>
+              Topic: {{ item.title }}
+            </option>
+          {% endfor %}
+        </optgroup>
+        <optgroup label="Chapters">
+          {% for item in chapter_choices %}
+            <option value="{{ item.id }}" {% if form.scope_id.value|stringformat:"s" == item.id|stringformat:"s" %}selected{% endif %}>
+              Chapter: {{ item.title }}
+            </option>
+          {% endfor %}
+        </optgroup>
+        <optgroup label="Units">
+          {% for item in unit_choices %}
+            <option value="{{ item.id }}" {% if form.scope_id.value|stringformat:"s" == item.id|stringformat:"s" %}selected{% endif %}>
+              Unit: {{ item.title }}
+            </option>
+          {% endfor %}
+        </optgroup>
+        <optgroup label="Subjects">
+          {% for item in subject_choices %}
+            <option value="{{ item.id }}" {% if form.scope_id.value|stringformat:"s" == item.id|stringformat:"s" %}selected{% endif %}>
+              Subject: {{ item.title }}
+            </option>
+          {% endfor %}
+        </optgroup>
+        <optgroup label="Courses">
+          {% for item in course_choices %}
+            <option value="{{ item.id }}" {% if form.scope_id.value|stringformat:"s" == item.id|stringformat:"s" %}selected{% endif %}>
+              Course: {{ item.title }}
+            </option>
+          {% endfor %}
+        </optgroup>
+      </select>
+      <p class="tagline">Pick an item that matches the scope type above. Random ignores this field.</p>
+      {% if form.scope_id.errors %}
+        <p class="field-error" role="alert">{{ form.scope_id.errors|striptags }}</p>
+      {% endif %}
+    </div>
+
+    {% include "components/form_field.html" with field=form.difficulty %}
+    {% include "components/form_field.html" with field=form.count %}
+
+    <div class="action-row">
+      <button type="submit" class="btn btn-primary">Start practice</button>
+      <a class="btn btn-secondary" href="{{ entry_href }}">Cancel</a>
+    </div>
+  </form>
+{% endblock %}

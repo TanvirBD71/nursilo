@@ -1,0 +1,276 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:dashboard' as parent_href %}
+{% include "components/back_link.html" with back_href=parent_href back_label="staff dashboard" %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="page-lede">Draft → Review → Approve → Publish. Bulk actions are permission-gated and never silent. March 2025 items stay out of bulk classify/publish.</p>
+  <p class="page-header-actions">
+    {% if can_create %}<a class="btn btn-primary" href="{% url 'staff:questions_create' %}">Create question</a>{% endif %}
+    {% if can_import %}
+      <a class="btn btn-secondary" href="{% url 'staff:questions_import' %}">Import (Excel)</a>
+      <a class="btn btn-ghost" href="{% url 'staff:questions_import_history' %}">Import history</a>
+    {% endif %}
+    <a class="btn btn-ghost" href="{% url 'staff:blueprints' %}">Blueprints</a>
+    <a class="btn btn-ghost" href="{% url 'staff:question_reports' %}">Error reports</a>
+  </p>
+</header>
+
+<nav aria-label="Editorial counts">
+  <ul class="queue-counts">
+    <li><a class="queue-count{% if not state and not needs_review %} is-active{% endif %}" href="{% url 'staff:questions' %}">All <span class="queue-count-n">{{ counts.total }}</span></a></li>
+    <li><a class="queue-count{% if state == 'draft' %} is-active{% endif %}" href="?state=draft">Draft <span class="queue-count-n">{{ counts.draft }}</span></a></li>
+    <li><a class="queue-count{% if needs_review %} is-active{% endif %}" href="?needs_review=1">Needs review <span class="queue-count-n">{{ counts.needs_review }}</span></a></li>
+    <li><a class="queue-count{% if state == 'review' %} is-active{% endif %}" href="?state=review">Submitted for review <span class="queue-count-n">{{ counts.review }}</span></a></li>
+    <li><a class="queue-count{% if state == 'approved' %} is-active{% endif %}" href="?state=approved">Approved <span class="queue-count-n">{{ counts.approved }}</span></a></li>
+    <li><a class="queue-count{% if state == 'published' %} is-active{% endif %}" href="?state=published">Published <span class="queue-count-n">{{ counts.published }}</span></a></li>
+    <li><a class="queue-count{% if state == 'archived' %} is-active{% endif %}" href="?state=archived">Archived <span class="queue-count-n">{{ counts.archived }}</span></a></li>
+  </ul>
+</nav>
+
+<form method="get" class="filter-bar staff-filter staff-filter--wide" role="search">
+  <div class="filter-bar-grid">
+    <div class="form-field">
+      <label for="id_q">Search</label>
+      <input id="id_q" name="q" type="search" value="{{ q }}" placeholder="Code, text, subject, topic">
+    </div>
+    <div class="form-field">
+      <label for="id_state">Status</label>
+      <select id="id_state" name="state">
+        <option value="">All</option>
+        {% for value,label in states %}
+          <option value="{{ value }}" {% if state == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="id_type">Type</label>
+      <select id="id_type" name="question_type">
+        <option value="">All</option>
+        {% for value,label in question_types %}
+          <option value="{{ value }}" {% if question_type == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="id_subject">Subject</label>
+      <input id="id_subject" name="subject" type="search" value="{{ subject }}">
+    </div>
+    <div class="form-field">
+      <label for="id_topic">Topic</label>
+      <input id="id_topic" name="topic" type="search" value="{{ topic }}">
+    </div>
+    <div class="form-field">
+      <label for="id_bpcat">Blueprint category</label>
+      <select id="id_bpcat" name="blueprint_category" data-category-select>
+        <option value="">All</option>
+        {% for cat in blueprint_categories %}
+          <option value="{{ cat.id }}" {% if blueprint_category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="id_bpcomp">Blueprint competency</label>
+      <select id="id_bpcomp" name="blueprint_competency" data-competency-select>
+        <option value="">All</option>
+        {% for comp in blueprint_competencies %}
+          <option value="{{ comp.id }}" data-category-id="{{ comp.category_id }}" {% if blueprint_competency == comp.id|stringformat:"s" %}selected{% endif %}>C{{ comp.number }} — {{ comp.text|truncatechars:60 }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="id_cog">Cognitive</label>
+      <select id="id_cog" name="cognitive">
+        <option value="">All</option>
+        {% for value,label in cognitive_levels %}
+          <option value="{{ value }}" {% if cognitive == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="id_diff">Difficulty</label>
+      <select id="id_diff" name="difficulty">
+        <option value="">All</option>
+        {% for value,label in difficulty_levels %}
+          <option value="{{ value }}" {% if difficulty == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="id_class_origin">Classification</label>
+      <select id="id_class_origin" name="classification_origin">
+        <option value="">All</option>
+        {% for value,label in classification_origins %}
+          <option value="{{ value }}" {% if classification_origin == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="id_source_type">Source</label>
+      <select id="id_source_type" name="source_type">
+        <option value="">All</option>
+        {% for value,label in source_types %}
+          <option value="{{ value }}" {% if source_type == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="id_source_name">Source name</label>
+      <input id="id_source_name" name="source_name" type="search" value="{{ source_name }}">
+    </div>
+    <div class="form-field">
+      <label for="id_from">Created from</label>
+      <input id="id_from" name="created_from" type="date" value="{{ created_from }}">
+    </div>
+    <div class="form-field">
+      <label for="id_to">Created to</label>
+      <input id="id_to" name="created_to" type="date" value="{{ created_to }}">
+    </div>
+    <div class="form-field">
+      <label for="id_batch">Import batch</label>
+      <select id="id_batch" name="import_batch_id">
+        <option value="">All</option>
+        {% for batch in import_batches %}
+          <option value="{{ batch.id }}" {% if import_batch_id == batch.id|stringformat:"s" %}selected{% endif %}>{{ batch.created_at|date:"Y-m-d H:i" }} · {{ batch.filename|default:"workbook" }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="filter-actions">
+    <label class="filter-check"><input id="id_scenario" name="scenario_based" type="checkbox" value="1" {% if scenario_based %}checked{% endif %}> Scenario-based</label>
+    <label class="filter-check"><input id="id_needs" name="needs_review" type="checkbox" value="1" {% if needs_review %}checked{% endif %}> Needs review</label>
+    <button type="submit" class="btn btn-primary">Apply</button>
+    <a class="btn btn-secondary" href="{% url 'staff:questions' %}">Reset</a>
+  </div>
+</form>
+
+<div data-bulk-root>
+<form method="post">
+  {% csrf_token %}
+  {% if can_bulk_submit or can_bulk_approve or can_bulk_publish or can_bulk_classify %}
+  <div class="bulk-bar" data-bulk-bar hidden>
+    <p>Selected: <strong data-selected-count>0</strong> of <span data-visible-count>{{ visible_count }}</span> visible on this page</p>
+    <button type="button" class="btn btn-ghost" data-clear-selection>Clear selection</button>
+    {% if can_bulk_submit %}
+      <button type="submit" class="btn btn-secondary" name="intent" value="bulk_submit">Submit for review</button>
+    {% endif %}
+    {% if can_bulk_approve %}
+      <button type="submit" class="btn btn-secondary" name="intent" value="bulk_approve">Approve</button>
+    {% endif %}
+    {% if can_bulk_publish %}
+      <label class="filter-check" data-publish-confirm>
+        <input type="checkbox" name="confirm_publish" value="1">
+        Confirm publish of selected questions
+      </label>
+      <button type="submit" class="btn btn-primary" name="intent" value="bulk_publish">Publish</button>
+    {% endif %}
+  </div>
+  {% if can_bulk_classify %}
+  <details class="staff-action-card bulk-classify-panel">
+    <summary>Bulk classification (selected rows)</summary>
+    <div class="filter-bar-grid bulk-classify-grid">
+      <div class="form-field">
+        <label for="id_bulk_subject">Subject</label>
+        <input id="id_bulk_subject" name="content_subject" type="text">
+      </div>
+      <div class="form-field">
+        <label for="id_bulk_topic">Topic</label>
+        <input id="id_bulk_topic" name="content_topic" type="text">
+      </div>
+      <div class="form-field">
+        <label for="id_bulk_cog">Cognitive level</label>
+        <select id="id_bulk_cog" name="cognitive_level">
+          <option value="">Keep existing</option>
+          {% for value,label in cognitive_levels %}
+            <option value="{{ value }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="id_bulk_cat">Blueprint category</label>
+        <select id="id_bulk_cat" name="blueprint_category_id" data-category-select>
+          <option value="">Keep existing</option>
+          {% for cat in blueprint_categories %}
+            <option value="{{ cat.id }}">{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="id_bulk_comp">Blueprint competency</label>
+        <select id="id_bulk_comp" name="blueprint_competency_id" data-competency-select>
+          <option value="">Keep existing / clear if category changes</option>
+          {% for comp in blueprint_competencies %}
+            <option value="{{ comp.id }}" data-category-id="{{ comp.category_id }}">C{{ comp.number }} — {{ comp.text|truncatechars:50 }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <p class="filter-actions">
+      <button type="submit" class="btn btn-secondary" name="intent" value="bulk_classify">Apply classification to selected</button>
+    </p>
+    <p class="tagline">Empty fields are left unchanged. Competency must belong to the selected category. Server validates every item.</p>
+  </details>
+  {% endif %}
+  {% endif %}
+
+  <div class="table-wrap" role="region" aria-label="Questions" tabindex="0">
+    <table class="data-table">
+      <thead>
+        <tr>
+          {% if can_bulk_submit or can_bulk_approve or can_bulk_publish or can_bulk_classify %}
+          <th scope="col">
+            <label class="filter-check">
+              <input type="checkbox" data-select-all>
+              <span class="visually-hidden">Select all visible</span>
+              <span class="tagline" aria-hidden="true">This page</span>
+            </label>
+          </th>
+          {% endif %}
+          <th scope="col">Code</th>
+          <th scope="col">Stem</th>
+          <th scope="col">Type</th>
+          <th scope="col">Subject</th>
+          <th scope="col">Topic</th>
+          <th scope="col">Category</th>
+          <th scope="col">Cognitive</th>
+          <th scope="col">Status</th>
+          <th scope="col">Review</th>
+          {% if can_view_provenance %}<th scope="col">Source</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for qobj in page_obj %}
+        <tr>
+          {% if can_bulk_submit or can_bulk_approve or can_bulk_publish or can_bulk_classify %}
+          <td>
+            <label class="filter-check">
+              <input type="checkbox" name="question_ids" value="{{ qobj.id }}" data-row-select>
+              <span class="visually-hidden">Select {{ qobj.question_code|default:qobj.id }}</span>
+            </label>
+          </td>
+          {% endif %}
+          <td>{{ qobj.question_code|default:"—" }}</td>
+          <td><a href="{% url 'staff:question_detail' qobj.id %}">{% with t=qobj.current_version.translations.all|first %}{{ t.stem|truncatechars:80|default:qobj.id }}{% endwith %}</a></td>
+          <td>{{ qobj.question_type }}</td>
+          <td>{{ qobj.content_subject|default:"—" }}</td>
+          <td>{{ qobj.content_topic|default:"—" }}</td>
+          <td>{{ qobj.blueprint_category.name|default:"—" }}{% if qobj.blueprint_competency %} · C{{ qobj.blueprint_competency.number }}{% endif %}</td>
+          <td>{{ qobj.get_cognitive_level_display|default:"—" }}</td>
+          <td>{% include "components/status_badge.html" with label=qobj.editorial_state tone="info" %}</td>
+          <td>
+            {% if qobj.needs_review %}{% include "components/status_badge.html" with label="Needs review" tone="warning" %}{% endif %}
+            {% if qobj.classification_origin == "suggested" %}{% include "components/status_badge.html" with label="Suggested" tone="warning" %}{% elif qobj.classification_origin == "approved" %}{% include "components/status_badge.html" with label="Approved classification" tone="info" %}{% elif not qobj.blueprint_category_id or not qobj.cognitive_level %}unclassified{% else %}—{% endif %}
+          </td>
+          {% if can_view_provenance %}<td>{{ qobj.source_name|default:"—" }}</td>{% endif %}
+        </tr>
+        {% empty %}
+        <tr><td colspan="12">{% include "components/empty_state.html" with title="No questions" message="No questions match the current search and filters. Clear filters to see the full bank." %}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</form>
+</div>
+{% include "staff/_pagination.html" %}
+{% endblock %}

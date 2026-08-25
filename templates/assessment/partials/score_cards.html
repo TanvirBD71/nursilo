@@ -1,0 +1,37 @@
+{% load static %}
+<section class="result-summary" aria-labelledby="score-heading">
+  <h2 class="section-title" id="score-heading">Score summary</h2>
+
+  <div class="result-summary-grid">
+    <div class="result-score-card">
+      <p class="result-score-percent">
+        <span class="result-score-percent-value">{{ score_summary.percent_correct|default:0 }}<span class="result-score-percent-unit">%</span></span>
+        <span class="result-score-percent-label">Correct</span>
+      </p>
+      <p class="result-score-fraction">
+        Score <strong>{{ score_summary.score|default:0 }}</strong> / {{ score_summary.total|default:0 }}
+      </p>
+      {% if completed_at %}
+        <p class="result-score-meta">Completed {{ completed_at|date:"M j, Y · g:i A" }}</p>
+      {% endif %}
+    </div>
+
+    <ul class="result-count-list">
+      <li class="result-count-card result-count-card--correct">
+        <span class="result-count-icon" aria-hidden="true">{% include "components/icon.html" with name="check-circle" %}</span>
+        <span class="result-count-value">{{ score_summary.correct|default:0 }}</span>
+        <span class="result-count-label">Correct</span>
+      </li>
+      <li class="result-count-card result-count-card--incorrect">
+        <span class="result-count-icon" aria-hidden="true">{% include "components/icon.html" with name="close-circle" %}</span>
+        <span class="result-count-value">{{ score_summary.incorrect|default:0 }}</span>
+        <span class="result-count-label">Incorrect</span>
+      </li>
+      <li class="result-count-card result-count-card--unanswered">
+        <span class="result-count-icon" aria-hidden="true">{% include "components/icon.html" with name="minus-circle" %}</span>
+        <span class="result-count-value">{{ score_summary.unanswered|default:0 }}</span>
+        <span class="result-count-label">Unanswered</span>
+      </li>
+    </ul>
+  </div>
+</section>

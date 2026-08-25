@@ -1,0 +1,10 @@
+{% extends "layouts/student.html" %}
+{% block title %}{{ feature_label }} — Nursilo{% endblock %}
+{% block content %}
+  <h1 class="page-title">{{ feature_label }}</h1>
+  <p class="page-lede">This destination is part of the student portal roadmap but is not implemented yet.</p>
+  {% include "components/unavailable_state.html" with title=feature_label message="This feature is not available yet. Nursilo shows this honest placeholder instead of a fake feature page." %}
+  <div class="action-row">
+    <a class="btn btn-primary" href="{% url 'portal:dashboard' %}">Back to dashboard</a>
+  </div>
+{% endblock %}

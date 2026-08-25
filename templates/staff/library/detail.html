@@ -1,0 +1,64 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:library' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Library" current_label=page_heading aria_label="Library" %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p>{% include "components/status_badge.html" with label=book.editorial_state tone="info" %} · Premium: {{ book.is_premium|yesno:"Yes,No" }}</p>
+  <p class="page-header-actions">
+    <a class="btn btn-ghost" href="{% url 'staff:library' %}">Back to library</a>
+  </p>
+</header>
+<section class="staff-action-card">
+  <h2>Edit</h2>
+  <form method="post" class="staff-form">
+    {% csrf_token %}
+    <input type="hidden" name="edit" value="1">
+    {% for field in form %}{% include "components/form_field.html" with field=field %}{% endfor %}
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+  </form>
+</section>
+<section class="staff-action-card">
+  <h2>Assets</h2>
+  <ul>
+    {% for asset in book.assets.all %}
+      <li>{{ asset.format }} — storage key present (not shown as auth)</li>
+    {% empty %}
+      <li>No assets.</li>
+    {% endfor %}
+  </ul>
+  <form method="post" class="staff-form">
+    {% csrf_token %}
+    <input type="hidden" name="add_asset" value="1">
+    <label for="id_asset_format">Format</label>
+    <select id="id_asset_format" name="asset_format">
+      <option value="pdf">PDF</option>
+      <option value="epub">EPUB</option>
+      <option value="html">HTML</option>
+      <option value="image">Image</option>
+    </select>
+    <label for="id_asset_storage_key">Storage key</label>
+    <input id="id_asset_storage_key" name="asset_storage_key" required>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-secondary">Add asset</button>
+    </div>
+  </form>
+</section>
+<section class="staff-action-card">
+  <h2>Workflow</h2>
+  {% if actions %}
+  <form method="post" class="staff-form">
+    {% csrf_token %}
+    <input type="hidden" name="workflow" value="1">
+    <select name="action" aria-label="Workflow action">{% for a in actions %}<option value="{{ a }}">{{ a }}</option>{% endfor %}</select>
+    <textarea name="notes" rows="2" aria-label="Notes"></textarea>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Apply</button>
+    </div>
+  </form>
+  {% endif %}
+</section>
+{% endblock %}

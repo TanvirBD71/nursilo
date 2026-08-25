@@ -1,0 +1,42 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:dashboard' as parent_href %}
+{% include "components/back_link.html" with back_href=parent_href back_label="staff dashboard" %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="page-header-actions">
+    <a class="btn btn-primary" href="{% url 'staff:users_create' %}">Create user</a>
+  </p>
+</header>
+<form method="get" class="filter-bar staff-filter" role="search">
+  <div class="form-field">
+    <label for="id_q">Search</label>
+    <input id="id_q" type="search" name="q" value="{{ q }}">
+  </div>
+  <div class="filter-actions">
+    <button type="submit" class="btn btn-primary">Apply</button>
+    <a class="btn btn-secondary" href="{% url 'staff:users' %}">Reset</a>
+  </div>
+</form>
+<div class="table-wrap" role="region" aria-label="Users" tabindex="0">
+  <table class="data-table">
+    <thead>
+      <tr><th scope="col">Email</th><th scope="col">Name</th><th scope="col">Active</th><th scope="col">Roles</th></tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        <td><a href="{% url 'staff:user_detail' row.user.id %}">{{ row.user.email }}</a></td>
+        <td>{{ row.user.full_name }}</td>
+        <td>{{ row.user.is_active|yesno:"Yes,No" }}</td>
+        <td>{{ row.roles|join:", " }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">No users found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "staff/_pagination.html" %}
+{% endblock %}

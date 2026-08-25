@@ -1,0 +1,15 @@
+<nav class="staff-nav" aria-label="Staff">
+  <ul id="staff-primary-nav" class="staff-nav-list" data-collapsible data-open="false">
+    {% for item in nav_items %}
+      {% if item.available %}
+        <li>
+          <a
+            class="staff-nav-link"
+            href="{{ item.href }}"
+            {% if item.current %}aria-current="page"{% endif %}
+          >{{ item.label }}</a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</nav>

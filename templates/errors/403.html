@@ -1,0 +1,16 @@
+﻿{% extends "layouts/error.html" %}
+{% block title %}Access denied — Nursilo{% endblock %}
+{% block content %}
+  <div class="error-panel">
+    <h1 class="page-title">{{ page_heading }}</h1>
+    <p class="page-lede">You do not have permission to view this page.</p>
+    <div class="action-row">
+      {% if user.is_authenticated %}
+        <a class="btn btn-primary" href="{{ recovery_href|default:'/portal/' }}">{{ recovery_label|default:"Go to dashboard" }}</a>
+      {% else %}
+        <a class="btn btn-primary" href="{% url 'accounts:login' %}">Sign in</a>
+      {% endif %}
+      <a class="btn btn-secondary" href="{% url 'home' %}">Home</a>
+    </div>
+  </div>
+{% endblock %}

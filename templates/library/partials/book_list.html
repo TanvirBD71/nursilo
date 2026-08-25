@@ -1,0 +1,57 @@
+{% if is_empty %}
+  {% include "components/empty_state.html" with title="No books found" message="Published books matching your filters will appear here. Unpublished titles are never listed." %}
+{% else %}
+  <ul class="library-catalog-list" id="library-book-list">
+    {% for book in books %}
+      <li class="library-catalog-item" data-access="{{ book.access_state }}">
+        <div class="library-catalog-item-main">
+          {% if book.cover_href %}
+            <img class="library-cover-thumb" src="{{ book.cover_href }}" alt="" width="72" height="96">
+          {% endif %}
+          <div>
+            <h2 class="section-title">
+              <a href="{{ book.href }}">{{ book.title }}</a>
+            </h2>
+            {% if book.author_name %}
+              <p class="library-meta">{{ book.author_name }}{% if book.edition %} · {{ book.edition }}{% endif %}</p>
+            {% endif %}
+            {% if book.category %}
+              <p class="library-meta">Category: {{ book.category }}</p>
+            {% endif %}
+            {% if book.blurb %}
+              <p>{{ book.blurb|truncatechars:180 }}</p>
+            {% endif %}
+            <p class="library-access-row">
+              {% if book.access_state == "locked" %}
+                {% include "components/status_badge.html" with label="Premium — locked" tone="premium" %}
+              {% elif book.is_premium %}
+                {% include "components/status_badge.html" with label="Premium" tone="premium" %}
+              {% else %}
+                {% include "components/status_badge.html" with label="Free" tone="success" %}
+              {% endif %}
+            </p>
+            <p>
+              <a class="btn btn-primary" href="{{ book.href }}">View details</a>
+              {% if book.can_read %}
+                <a class="btn btn-secondary" href="{{ book.reader_href }}">Read</a>
+              {% endif %}
+            </p>
+          </div>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+  {% if total_pages > 1 %}
+    <nav class="library-pagination" aria-label="Catalog pages">
+      <p>Page {{ page }} of {{ total_pages }} ({{ total }} books)</p>
+      <p>
+        {% if has_prev %}
+          <a class="btn btn-secondary" href="?q={{ q|urlencode }}&amp;category={{ category|urlencode }}&amp;access={{ access|urlencode }}&amp;page={{ prev_page }}">Previous</a>
+        {% endif %}
+        {% if has_next %}
+          <a class="btn btn-secondary" href="?q={{ q|urlencode }}&amp;category={{ category|urlencode }}&amp;access={{ access|urlencode }}&amp;page={{ next_page }}">Next</a>
+        {% endif %}
+      </p>
+    </nav>
+  {% endif %}
+{% endif %}

@@ -1,0 +1,44 @@
+{% extends "layouts/student.html" %}
+{% load static %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/library.css' %}">
+{% endblock %}
+{% block content %}
+  {% include "library/partials/breadcrumbs.html" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Browse published nursing books. Premium titles stay locked until your subscription allows access.</p>
+  <p class="library-utility-links">
+    <a class="btn btn-secondary" href="{{ bookmarks_href }}">Bookmarks</a>
+    <a class="btn btn-secondary" href="{{ downloads_href }}">Downloads</a>
+  </p>
+
+  <form class="library-filter-form" method="get" action="{% url 'library:catalog' %}" role="search" aria-label="Search library">
+    <div class="form-field">
+      <label for="id_q">Search</label>
+      <input type="search" name="q" id="id_q" value="{{ q }}" maxlength="200" autocomplete="off">
+    </div>
+    <div class="form-field">
+      <label for="id_category">Category</label>
+      <select name="category" id="id_category">
+        <option value="">All categories</option>
+        {% for cat in categories %}
+          <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="id_access">Access</label>
+      <select name="access" id="id_access">
+        <option value="all" {% if access == "all" %}selected{% endif %}>All</option>
+        <option value="free" {% if access == "free" %}selected{% endif %}>Free</option>
+        <option value="premium" {% if access == "premium" %}selected{% endif %}>Premium</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Apply filters</button>
+  </form>
+
+  <div id="library-results">
+    {% include "library/partials/book_list.html" %}
+  </div>
+{% endblock %}

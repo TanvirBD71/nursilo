@@ -1,0 +1,27 @@
+{% extends "layouts/student.html" %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block content %}
+  {% include "learning/partials/breadcrumbs.html" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Browse published courses and continue your nursing studies.</p>
+  <p><a class="btn btn-secondary" href="{% url 'learning:progress' %}">View learning progress</a></p>
+
+  {% if is_empty %}
+    {% include "components/empty_state.html" with title="No courses available" message="Published courses will appear here when they are ready. Nothing is hidden behind a fake catalog." %}
+  {% else %}
+    <ul class="learning-catalog-list">
+      {% for course in courses %}
+        <li class="learning-catalog-item">
+          <h2 class="section-title">
+            <a href="{{ course.href }}">{{ course.title }}</a>
+          </h2>
+          {% if course.summary %}
+            <p>{{ course.summary|truncatechars:220 }}</p>
+          {% endif %}
+          {% include "learning/partials/progress.html" with progress=course.progress %}
+          <p><a class="btn btn-primary" href="{{ course.href }}">Open course</a></p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

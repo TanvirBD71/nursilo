@@ -1,0 +1,51 @@
+{% extends "layouts/student.html" %}
+{% block title %}Checkout — Nursilo{% endblock %}
+{% block content %}
+  <nav class="breadcrumb-nav page-context" aria-label="Billing">
+    <ol class="breadcrumb-list">
+      <li class="breadcrumb-item"><a href="{% url 'billing:pricing' %}">Pricing</a></li>
+      <li class="breadcrumb-item"><span aria-current="page">Checkout</span></li>
+    </ol>
+  </nav>
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Confirm your plan. You will be redirected to SSLCommerz sandbox to pay. Browser redirects alone are not payment proof — Nursilo activates Premium only after server verification.</p>
+
+  <section class="dashboard-card section" aria-labelledby="checkout-plan">
+    <h2 class="section-title" id="checkout-plan">{{ plan.name }}</h2>
+    <dl class="profile-dl">
+      <div>
+        <dt>Price</dt>
+        <dd>{{ plan.display_price }} {{ plan.currency }} / year</dd>
+      </div>
+      <div>
+        <dt>Duration</dt>
+        <dd>{{ plan.duration_days }} days</dd>
+      </div>
+      <div>
+        <dt>Gateway</dt>
+        <dd>SSLCommerz (sandbox)</dd>
+      </div>
+    </dl>
+
+    {% if not email_verified %}
+      {% include "components/unavailable_state.html" with title="Email verification required" message="Verify your email before starting premium checkout." %}
+      <p class="billing-links">
+        <a href="{% url 'accounts:resend_verification' %}">Verify email</a>
+        ·
+        <a href="{% url 'accounts:verify_email' %}">Enter verification token</a>
+      </p>
+    {% elif not checkout_available %}
+      {% include "components/unavailable_state.html" with title="Gateway not configured" message="Sandbox credentials are not set. Checkout cannot start." %}
+    {% else %}
+      <form method="post" action="{% url 'billing:checkout' %}" class="form-stack">
+        {% csrf_token %}
+        <input type="hidden" name="plan_code" value="{{ plan.code }}">
+        <button type="submit" class="btn btn-primary">Pay {{ plan.display_price }} with SSLCommerz</button>
+      </form>
+    {% endif %}
+  </section>
+
+  <p class="billing-links">
+    <a href="{% url 'billing:pricing' %}">Back to pricing</a>
+  </p>
+{% endblock %}

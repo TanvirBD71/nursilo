@@ -1,0 +1,65 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="tagline">Visibility only — payment confirmation remains owned by billing services. No gateway secrets shown. Annual Premium remains BDT 199 / 365 days. SSLCommerz remains sandbox.</p>
+</header>
+{% if can_grant %}
+<section class="staff-action-card" aria-labelledby="grant-h">
+  <h2 id="grant-h">Manual grant / revoke</h2>
+  <form method="post" class="staff-form">
+    {% csrf_token %}
+    {% for field in grant_form %}{% include "components/form_field.html" with field=field %}{% endfor %}
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary" name="grant" value="1">Grant Premium (plan duration)</button>
+      <button type="submit" class="btn btn-danger" name="revoke" value="1">Revoke Premium</button>
+    </div>
+  </form>
+</section>
+{% endif %}
+{% if subs %}
+<section class="staff-action-card">
+  <h2>Subscriptions</h2>
+  <div class="table-wrap" role="region" aria-label="Subscriptions" tabindex="0">
+    <table class="data-table">
+      <thead><tr><th>User</th><th>State</th><th>Expires</th></tr></thead>
+      <tbody>
+        {% for sub in subs %}
+        <tr>
+          <td>{{ sub.user.email }}</td>
+          <td>{% include "components/status_badge.html" with label=sub.state tone="info" %}</td>
+          <td>{{ sub.premium_expires_at|default:"—" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">No subscriptions.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+{% if payments %}
+<section class="staff-action-card">
+  <h2>Payment events</h2>
+  <div class="table-wrap" role="region" aria-label="Payments" tabindex="0">
+    <table class="data-table">
+      <thead><tr><th>User</th><th>Gateway</th><th>Status</th><th>Plan</th><th>Amount</th></tr></thead>
+      <tbody>
+        {% for pay in payments %}
+        <tr>
+          <td>{{ pay.user.email }}</td>
+          <td>{{ pay.gateway }}</td>
+          <td>{% include "components/status_badge.html" with label=pay.status tone="info" %}</td>
+          <td>{{ pay.plan_code }}</td>
+          <td>{{ pay.amount }} {{ pay.currency }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No payments.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

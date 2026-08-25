@@ -1,0 +1,41 @@
+{% extends "layouts/student.html" %}
+{% block title %}Payment failed — Nursilo{% endblock %}
+{% block content %}
+  <nav class="breadcrumb-nav page-context" aria-label="Billing">
+    <ol class="breadcrumb-list">
+      <li class="breadcrumb-item"><a href="{% url 'billing:pricing' %}">Pricing</a></li>
+      <li class="breadcrumb-item"><span aria-current="page">Payment failed</span></li>
+    </ol>
+  </nav>
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">This payment was not successful. Premium was not granted and no expiry was extended.</p>
+
+  <section class="dashboard-card section" aria-labelledby="failure-detail">
+    <h2 class="section-title" id="failure-detail">Transaction</h2>
+    <dl class="profile-dl">
+      <div>
+        <dt>Plan</dt>
+        <dd>{{ payment.plan_name }}</dd>
+      </div>
+      <div>
+        <dt>Amount</dt>
+        <dd>{{ payment.amount }} {{ payment.currency }}</dd>
+      </div>
+      <div>
+        <dt>Status</dt>
+        <dd>{{ payment.status_label }}</dd>
+      </div>
+      <div>
+        <dt>Reference</dt>
+        <dd><code>{{ payment.gateway_ref }}</code></dd>
+      </div>
+    </dl>
+    {% if checkout_available|default:True %}
+      <p><a class="btn btn-primary" href="{% url 'billing:pricing' %}">Try again</a></p>
+    {% endif %}
+  </section>
+
+  <p class="billing-links">
+    <a href="{% url 'billing:history' %}">Billing history</a>
+  </p>
+{% endblock %}

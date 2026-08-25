@@ -1,0 +1,32 @@
+{% extends "layouts/student.html" %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block content %}
+  <header class="page-header">
+    <h1 class="page-title">{{ page_heading }}</h1>
+    <p class="tagline">{{ tagline }}</p>
+  </header>
+
+  <div class="action-row">
+    <a class="btn btn-primary" href="{{ setup_href }}">Start practice setup</a>
+    <a class="btn btn-secondary" href="{{ history_href }}">Practice history</a>
+  </div>
+
+  <section class="practice-resume" aria-labelledby="resume-heading">
+    <h2 class="section-title" id="resume-heading">Resume in progress</h2>
+    {% if has_resume %}
+      <ul class="practice-list">
+        {% for item in resume_items %}
+          <li class="practice-list-item">
+            <h3 class="practice-list-title">{{ item.scope_label }}</h3>
+            <p class="tagline">
+              Answered {{ item.progress.answered }} of {{ item.progress.total }}
+            </p>
+            <a class="btn btn-secondary" href="{{ item.href }}">Resume</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      {% include "components/empty_state.html" with title="No active practice" message="Start a new practice session when you are ready." %}
+    {% endif %}
+  </section>
+{% endblock %}

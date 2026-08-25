@@ -1,0 +1,61 @@
+{% extends "layouts/staff.html" %}
+{% block title %}Import report — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:questions_import_history' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Import history" current_label=page_heading aria_label="Import report" %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="page-header-actions">
+    <a class="btn btn-ghost" href="{% url 'staff:questions_import_history' %}">Back to import history</a>
+  </p>
+</header>
+<section class="staff-action-card" aria-labelledby="summary">
+  <h2 id="summary">Summary</h2>
+  <dl class="detail-list">
+    <dt>File</dt><dd>{{ batch.filename|default:"—" }}</dd>
+    <dt>Status</dt><dd>{% include "components/status_badge.html" with label=batch.status tone="info" %}</dd>
+    <dt>When</dt><dd>{{ batch.created_at }}</dd>
+    <dt>Actor</dt><dd>{{ batch.created_by.email|default:"—" }}</dd>
+    <dt>Total rows</dt><dd>{{ batch.total_rows }}</dd>
+    <dt>Created</dt><dd>{{ batch.created_count }}</dd>
+    <dt>Skipped duplicates</dt><dd>{{ batch.skipped_duplicate }}</dd>
+    <dt>Invalid</dt><dd>{{ batch.invalid_count }}</dd>
+    <dt>Needs review</dt><dd>{{ batch.needs_review_count }}</dd>
+  </dl>
+</section>
+<p class="page-header-actions">
+  <a class="btn btn-secondary" href="{{ review_href }}">Review imported questions</a>
+</p>
+{% if batch.type_counts %}
+<p>Types: {% for k,v in batch.type_counts.items %}{{ k }}={{ v }} {% endfor %}</p>
+{% endif %}
+{% if batch.blueprint_counts %}
+<p>Categories: {% for k,v in batch.blueprint_counts.items %}{{ k }}={{ v }} {% endfor %}</p>
+{% endif %}
+{% if batch.cognitive_counts %}
+<p>Cognitive: {% for k,v in batch.cognitive_counts.items %}{{ k }}={{ v }} {% endfor %}</p>
+{% endif %}
+{% if source_counts %}
+<p>Sources: {% for k,v in source_counts.items %}{{ k }}={{ v }} {% endfor %}</p>
+{% endif %}
+{% if created_codes %}
+<h2>Created codes</h2>
+<ul>{% for code in created_codes %}<li>{{ code }}</li>{% endfor %}</ul>
+{% if created_more %}<p class="tagline">{{ created_more }} more created code(s) omitted. Use Review imported questions.</p>{% endif %}
+{% endif %}
+{% if skipped_codes %}
+<h2>Skipped codes</h2>
+<ul>{% for code in skipped_codes %}<li>{{ code }}</li>{% endfor %}</ul>
+{% if skipped_more %}<p class="tagline">{{ skipped_more }} more skipped code(s) omitted.</p>{% endif %}
+{% endif %}
+{% if display_errors %}
+<h2>Errors</h2>
+<ul>{% for e in display_errors %}<li>{{ e }}</li>{% endfor %}</ul>
+{% if hidden_error_count %}<p class="tagline">{{ hidden_error_count }} more error(s) omitted.</p>{% endif %}
+{% endif %}
+{% if display_warnings %}
+<h2>Warnings</h2>
+<ul>{% for w in display_warnings %}<li>{{ w }}</li>{% endfor %}</ul>
+{% if hidden_warning_count %}<p class="tagline">{{ hidden_warning_count }} more warning(s) omitted.</p>{% endif %}
+{% endif %}
+{% endblock %}

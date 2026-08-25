@@ -1,0 +1,299 @@
+/* Staff console layout — dense but accessible (docs/11, docs/15, docs/20). */
+.staff-header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.staff-header-inner {
+  width: min(100% - 2rem, var(--shell-max));
+  margin: 0 auto;
+  padding: var(--space-3) 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.staff-header-utils {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.staff-nav {
+  width: min(100% - 2rem, var(--shell-max));
+  margin: 0 auto;
+  padding: var(--space-2) 0 var(--space-3);
+}
+
+.staff-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+}
+
+.staff-nav-list a,
+.staff-nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+
+.staff-nav-list a:hover,
+.staff-nav-link:hover {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+}
+
+.staff-nav-list a[aria-current="page"],
+.staff-nav-link[aria-current="page"] {
+  font-weight: 700;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  text-decoration: none;
+}
+
+.staff-nav-toggle {
+  display: none;
+}
+
+.staff-footer {
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  border-top: 1px solid var(--color-divider);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  background: color-mix(in srgb, var(--color-surface) 80%, var(--color-background));
+}
+
+.page-header {
+  margin-bottom: var(--space-5);
+}
+
+.page-header h1 {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+}
+
+.staff-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.staff-stats > div {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.stat-label {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.staff-filter,
+.staff-form {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.staff-form {
+  max-width: 40rem;
+}
+
+.staff-filter.staff-filter--wide,
+.filter-bar.staff-filter {
+  max-width: none;
+}
+
+.staff-form input,
+.staff-form select,
+.staff-form textarea,
+.staff-filter input,
+.staff-filter select,
+.staff-filter textarea,
+.filter-bar input,
+.filter-bar select,
+.filter-bar textarea {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+.staff-form textarea,
+.filter-bar textarea {
+  min-height: 5rem;
+}
+
+.staff-form input[type="checkbox"],
+.staff-filter input[type="checkbox"],
+.filter-bar input[type="checkbox"] {
+  width: 1.15rem;
+  height: 1.15rem;
+  min-height: 0;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 36rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-divider);
+  text-align: left;
+  vertical-align: top;
+}
+
+.data-table th {
+  background: var(--color-background);
+  font-weight: 600;
+}
+
+/* Legacy alias — same interaction as shared .btn.btn-primary */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
+  background: var(--color-primary);
+  color: #fff;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--motion-base) var(--ease-out),
+    border-color var(--motion-base) var(--ease-out),
+    color var(--motion-base) var(--ease-out);
+}
+
+.button:hover {
+  background: var(--color-primary-hover);
+  color: #fff;
+}
+
+.staff-filter .filter-actions,
+.staff-form .filter-actions {
+  margin-top: 0;
+}
+
+.staff-inline-form {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.pagination {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  margin-top: var(--space-4);
+}
+
+.preview-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+}
+
+@media (max-width: 47.99rem) {
+  .staff-nav-toggle {
+    display: inline-flex;
+  }
+
+  .staff-nav-list[data-open="false"] {
+    display: none;
+  }
+
+  .staff-nav-list[data-open="true"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}
+
+.staff-queue-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (min-width: 48rem) {
+  .staff-queue-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.staff-queue-card,
+.staff-action-card {
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+}
+
+.staff-queue-card h2,
+.staff-action-card h2 {
+  margin: 0 0 var(--space-3);
+  font-size: 1.0625rem;
+}
+
+.staff-queue-card ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.page-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.bulk-classify-panel {
+  margin-bottom: var(--space-4);
+}
+
+.bulk-classify-grid {
+  margin-top: var(--space-3);
+}

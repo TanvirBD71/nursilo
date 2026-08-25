@@ -1,0 +1,16 @@
+<nav class="student-nav" id="student-primary-nav" aria-label="Student" data-collapsible data-open="false">
+  <ul class="student-nav-list">
+    {% for item in nav_items %}
+      <li>
+        <a
+          class="student-nav-link"
+          href="{{ item.href }}"
+          data-available="{% if item.available %}true{% else %}false{% endif %}"
+          {% if item.current %}aria-current="page"{% endif %}
+        >
+          {{ item.label }}{% if not item.available %} <span class="visually-hidden">(coming later)</span>{% endif %}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</nav>

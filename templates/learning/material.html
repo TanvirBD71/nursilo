@@ -1,0 +1,24 @@
+{% extends "layouts/student.html" %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block content %}
+  {% include "learning/partials/breadcrumbs.html" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  {% if is_premium %}
+    {% include "components/status_badge.html" with label="Premium" tone="premium" %}
+  {% endif %}
+
+  {% if locked %}
+    {% include "components/unavailable_state.html" with title="Premium required" message=lock_message %}
+    <p><a class="btn btn-secondary" href="{% url 'portal:subscription' %}">View subscription</a></p>
+  {% elif body %}
+    <article class="material-body reading-measure">{{ body|linebreaks }}</article>
+  {% else %}
+    {% include "components/empty_state.html" with title="No material text" message="This published material does not have readable content in your language yet." %}
+  {% endif %}
+
+  {% if via_lesson_id %}
+    <p class="lesson-nav">
+      <a class="btn btn-secondary" href="{% url 'learning:lesson' lesson_id=via_lesson_id %}">Back to lesson</a>
+    </p>
+  {% endif %}
+{% endblock %}

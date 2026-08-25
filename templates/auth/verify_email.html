@@ -1,0 +1,18 @@
+{% extends "layouts/auth.html" %}
+{% block title %}Verify email — Nursilo{% endblock %}
+{% block content %}
+{% include "components/back_link.html" %}
+<h1 class="page-title">Verify email</h1>
+<p class="page-lede">Enter the verification token from your email to confirm your address.</p>
+<form method="post" action="{% url 'accounts:verify_email' %}" class="form-stack" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="form-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+  {% include "components/form_field.html" with field=form.token %}
+  <button type="submit" class="btn btn-primary">Verify</button>
+</form>
+<p class="auth-links">
+  <a href="{% url 'accounts:resend_verification' %}">Resend verification</a>
+  <span class="auth-links-sep" aria-hidden="true">·</span>
+  <a href="{% url 'accounts:login' %}">Sign in</a>
+</p>
+{% endblock %}

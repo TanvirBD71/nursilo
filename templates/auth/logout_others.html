@@ -1,0 +1,13 @@
+{% extends "layouts/auth.html" %}
+{% block title %}Sign out other devices — Nursilo{% endblock %}
+{% block content %}
+{% include "components/back_link.html" %}
+<h1 class="page-title">Sign out other devices</h1>
+<p class="page-lede">Confirm your password to end sessions on other devices.</p>
+<form method="post" action="{% url 'accounts:logout_others' %}" class="form-stack" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="form-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+  {% include "components/form_field.html" with field=form.password %}
+  <button type="submit" class="btn btn-danger">Sign out others</button>
+</form>
+{% endblock %}

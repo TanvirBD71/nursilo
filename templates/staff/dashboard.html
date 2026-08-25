@@ -1,0 +1,51 @@
+{% extends "layouts/staff.html" %}
+{% block title %}Staff dashboard — Nursilo{% endblock %}
+{% block content %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="page-lede">Operate learning, assessment, library, CMS, and billing with least privilege.</p>
+</header>
+<section class="staff-stats" aria-label="Overview">
+  <div><span class="stat-value">{{ dashboard.courses_total }}</span><span class="stat-label">Courses</span></div>
+  <div><span class="stat-value">{{ dashboard.courses_in_review }}</span><span class="stat-label">Courses in review</span></div>
+  <div><span class="stat-value">{{ dashboard.questions_total }}</span><span class="stat-label">Questions</span></div>
+  <div><span class="stat-value">{{ dashboard.questions_in_review }}</span><span class="stat-label">Questions in review</span></div>
+  <div><span class="stat-value">{{ dashboard.exams_published }}</span><span class="stat-label">Published exams</span></div>
+  <div><span class="stat-value">{{ dashboard.books_total }}</span><span class="stat-label">Books</span></div>
+  {% if dashboard.can_billing %}
+  <div><span class="stat-value">{{ dashboard.premium_active }}</span><span class="stat-label">Premium active</span></div>
+  {% endif %}
+</section>
+{% if dashboard.question_bank %}
+<section class="staff-stats" aria-label="Question bank">
+  <div><span class="stat-value">{{ dashboard.question_bank.total }}</span><span class="stat-label">Bank total</span></div>
+  <div><span class="stat-value">{{ dashboard.question_bank.draft }}</span><span class="stat-label">Draft</span></div>
+  <div><span class="stat-value">{{ dashboard.question_bank.needs_review }}</span><span class="stat-label">Needs review</span></div>
+  <div><span class="stat-value">{{ dashboard.question_bank.submitted }}</span><span class="stat-label">Submitted</span></div>
+  <div><span class="stat-value">{{ dashboard.question_bank.approved }}</span><span class="stat-label">Approved</span></div>
+  <div><span class="stat-value">{{ dashboard.question_bank.published }}</span><span class="stat-label">Published</span></div>
+  <div><span class="stat-value">{{ dashboard.question_bank.invalid }}</span><span class="stat-label">Invalid (no version)</span></div>
+</section>
+{% if dashboard.question_bank.by_type %}
+<p class="tagline">By type: {% for k,v in dashboard.question_bank.by_type.items %}{{ k }}={{ v }} {% endfor %}</p>
+{% endif %}
+{% if dashboard.question_bank.by_blueprint %}
+<p class="tagline">By blueprint: {% for k,v in dashboard.question_bank.by_blueprint.items %}{{ k }}={{ v }} {% endfor %}</p>
+{% endif %}
+{% if dashboard.question_bank.by_subject %}
+<p class="tagline">By subject: {% for k,v in dashboard.question_bank.by_subject.items %}{{ k }}={{ v }} {% endfor %}</p>
+{% endif %}
+{% endif %}
+<section class="staff-queue-grid" aria-label="Quick actions">
+  <article class="staff-action-card">
+    <h2>Editorial</h2>
+    <p class="tagline">Review courses, questions, and books waiting in the shared editorial states.</p>
+    <p><a class="btn btn-primary" href="{% url 'staff:editorial_queue' %}">Open editorial queue</a></p>
+  </article>
+  <article class="staff-action-card">
+    <h2>Question bank</h2>
+    <p class="tagline">Filter, classify, and move items through Draft → Review → Approve → Publish.</p>
+    <p><a class="btn btn-secondary" href="{% url 'staff:questions' %}">Open question bank</a></p>
+  </article>
+</section>
+{% endblock %}

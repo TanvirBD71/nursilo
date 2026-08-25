@@ -1,0 +1,44 @@
+{% extends "layouts/student.html" %}
+{% block title %}Subscription — Nursilo{% endblock %}
+{% block content %}
+{% url 'billing:pricing' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Pricing" current_label=page_heading aria_label="Billing" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Your current plan status. Premium access is granted only after server-verified payment.</p>
+
+  <section class="dashboard-card section" aria-labelledby="plan-heading">
+    <h2 class="section-title" id="plan-heading">Current plan</h2>
+    <p>
+      {% include "components/status_badge.html" with label=subscription.label tone=subscription.is_premium|yesno:"premium,free" %}
+    </p>
+    <dl class="profile-dl">
+      <div>
+        <dt>State</dt>
+        <dd>{{ subscription.state }}</dd>
+      </div>
+      <div>
+        <dt>Entitlement</dt>
+        <dd>{{ entitlement.tier }}{% if entitlement.is_premium %} (Premium allowed){% else %} (Premium denied){% endif %}</dd>
+      </div>
+      <div>
+        <dt>Premium expires</dt>
+        <dd>{{ subscription.premium_expires_at|default:"—" }}</dd>
+      </div>
+    </dl>
+    {% if checkout_available %}
+      {% with plan=plans.0 %}
+      <p>
+        <a class="btn btn-primary" href="{% url 'billing:pricing' %}">View {{ plan.name }} — {{ plan.display_price }}/year</a>
+      </p>
+      {% endwith %}
+    {% else %}
+      {% include "components/unavailable_state.html" with title="Checkout unavailable" message="Payment gateway credentials are not configured in this environment. Plan status still reflects your subscription honestly." %}
+    {% endif %}
+  </section>
+
+  <p class="billing-links">
+    <a href="{% url 'billing:pricing' %}">Pricing</a>
+    ·
+    <a href="{% url 'billing:history' %}">Billing history</a>
+  </p>
+{% endblock %}

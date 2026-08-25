@@ -1,0 +1,22 @@
+{% if breadcrumbs %}
+<nav class="breadcrumb-nav page-context" aria-label="{{ aria_label|default:'Section' }}">
+  <ol class="breadcrumb-list">
+    {% for crumb in breadcrumbs %}
+      <li class="breadcrumb-item">
+        {% if crumb.href and not forloop.last %}
+          <a href="{{ crumb.href }}">{{ crumb.label }}</a>
+        {% else %}
+          <span{% if forloop.last %} aria-current="page"{% endif %}>{{ crumb.label }}</span>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ol>
+</nav>
+{% elif parent_href and parent_label %}
+<nav class="breadcrumb-nav page-context" aria-label="{{ aria_label|default:'Section' }}">
+  <ol class="breadcrumb-list">
+    <li class="breadcrumb-item"><a href="{{ parent_href }}">{{ parent_label }}</a></li>
+    <li class="breadcrumb-item"><span aria-current="page">{{ current_label|default:page_heading }}</span></li>
+  </ol>
+</nav>
+{% endif %}

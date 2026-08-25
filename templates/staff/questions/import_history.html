@@ -1,0 +1,44 @@
+{% extends "layouts/staff.html" %}
+{% block title %}Import history — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:questions' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Question bank" current_label=page_heading aria_label="Import history" %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="page-header-actions">
+    <a class="btn btn-ghost" href="{% url 'staff:questions' %}">Back to question bank</a>
+    <a class="btn btn-secondary" href="{% url 'staff:questions_import' %}">New import</a>
+  </p>
+</header>
+<div class="table-wrap" role="region" aria-label="Import batches" tabindex="0">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th scope="col">When</th>
+        <th scope="col">File</th>
+        <th scope="col">Status</th>
+        <th scope="col">Created</th>
+        <th scope="col">Skipped</th>
+        <th scope="col">Invalid</th>
+        <th scope="col">Needs review</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for batch in page_obj %}
+      <tr>
+        <td><a href="{% url 'staff:questions_import_batch' batch.id %}">{{ batch.created_at }}</a></td>
+        <td>{{ batch.filename|default:"—" }}</td>
+        <td>{% include "components/status_badge.html" with label=batch.status tone="info" %}</td>
+        <td>{{ batch.created_count }}</td>
+        <td>{{ batch.skipped_duplicate }}</td>
+        <td>{{ batch.invalid_count }}</td>
+        <td>{{ batch.needs_review_count }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7">No imports yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "staff/_pagination.html" %}
+{% endblock %}

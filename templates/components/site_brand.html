@@ -1,0 +1,12 @@
+{% load static %}
+<a class="site-brand" href="{{ brand_href }}">
+  <img
+    class="site-brand-mark"
+    src="{% static 'img/nursilo-logo.png' %}"
+    width="36"
+    height="36"
+    alt=""
+    decoding="async"
+  >
+  <span class="site-brand-text">{{ brand_text|default:"Nursilo" }}</span>
+</a>

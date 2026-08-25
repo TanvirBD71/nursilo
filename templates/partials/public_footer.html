@@ -1,0 +1,21 @@
+﻿<footer class="public-footer">
+  <div class="public-footer-inner">
+    <div class="public-footer-brand-block">
+      {% url 'home' as brand_href %}
+      {% include "components/site_brand.html" with brand_href=brand_href %}
+      <p class="tagline">Learn. Practice. Succeed.</p>
+    </div>
+    <nav class="public-footer-nav" aria-label="Footer">
+      <a href="#courses">Courses</a>
+      <a href="#practice">Practice</a>
+      <a href="#exams">Exams</a>
+      <a href="#library">Library</a>
+      <a href="#pricing">Pricing</a>
+      <a href="{% url 'accounts:login' %}">Login</a>
+      <a href="{% url 'accounts:register' %}">Create account</a>
+    </nav>
+  </div>
+  <div class="public-footer-legal">
+    <p>&copy; {% now "Y" %} Nursilo. All rights reserved.</p>
+  </div>
+</footer>

@@ -1,0 +1,21 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="page-header-actions">
+    <a class="btn btn-primary" href="{% url 'staff:announcements_create' %}">Create announcement</a>
+  </p>
+</header>
+<ul>
+  {% for row in page_obj %}
+    <li>
+      <a href="{% url 'staff:announcement_detail' row.id %}">{{ row.code }}</a>
+      — {% include "components/status_badge.html" with label=row.editorial_state tone="info" %}
+    </li>
+  {% empty %}
+    <li>No announcements.</li>
+  {% endfor %}
+</ul>
+{% include "staff/_pagination.html" %}
+{% endblock %}

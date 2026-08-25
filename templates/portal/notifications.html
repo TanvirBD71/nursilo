@@ -1,0 +1,35 @@
+{% extends "layouts/student.html" %}
+{% block title %}Notifications — Nursilo{% endblock %}
+{% block content %}
+{% url 'portal:dashboard' as parent_href %}
+{% include "components/back_link.html" with back_href=parent_href back_label="dashboard" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">In-app notices for your account.</p>
+
+  {% if is_empty %}
+    {% include "components/empty_state.html" with title="No notifications" message="When announcements or account notices arrive, they will appear here." %}
+  {% else %}
+    <ul class="notification-list">
+      {% for item in notifications %}
+        <li class="notification-item" data-read="{% if item.is_read %}true{% else %}false{% endif %}">
+          <p>
+            <strong>{{ item.title }}</strong>
+            {% if item.is_read %}
+              {% include "components/status_badge.html" with label="Read" tone="free" %}
+            {% else %}
+              {% include "components/status_badge.html" with label="Unread" tone="info" %}
+            {% endif %}
+          </p>
+          <p>{{ item.body }}</p>
+          <p class="tagline">{{ item.created_at }}</p>
+          {% if not item.is_read %}
+            <form method="post" action="{% url 'portal:notification_mark_read' item.id %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-secondary">Mark as read</button>
+            </form>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% if progress %}
+  <div class="learning-progress" role="status" aria-label="Learning progress">
+    {% if progress.total_count %}
+      <p class="learning-progress-text">
+        {{ progress.completed_count }} of {{ progress.total_count }} lessons complete
+        ({{ progress.percent }}%)
+      </p>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" style="width: {{ progress.percent }}%;"></div>
+      </div>
+    {% else %}
+      <p class="learning-progress-text">No published lessons in this section yet.</p>
+    {% endif %}
+  </div>
+{% endif %}

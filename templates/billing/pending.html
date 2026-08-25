@@ -1,0 +1,36 @@
+{% extends "layouts/student.html" %}
+{% block title %}Payment pending — Nursilo{% endblock %}
+{% block content %}
+{% url 'billing:current' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Subscription" current_label=page_heading aria_label="Billing" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">We have not confirmed this payment yet. Premium is not active until server verification succeeds.</p>
+
+  <section class="dashboard-card section" aria-labelledby="pending-detail">
+    <h2 class="section-title" id="pending-detail">Transaction</h2>
+    <dl class="profile-dl">
+      <div>
+        <dt>Plan</dt>
+        <dd>{{ payment.plan_name }}</dd>
+      </div>
+      <div>
+        <dt>Amount</dt>
+        <dd>{{ payment.amount }} {{ payment.currency }}</dd>
+      </div>
+      <div>
+        <dt>Status</dt>
+        <dd>{{ payment.status_label }}</dd>
+      </div>
+      <div>
+        <dt>Reference</dt>
+        <dd><code>{{ payment.gateway_ref }}</code></dd>
+      </div>
+    </dl>
+  </section>
+
+  <p class="billing-links">
+    <a href="{% url 'billing:current' %}">Subscription</a>
+    ·
+    <a href="{% url 'billing:history' %}">Billing history</a>
+  </p>
+{% endblock %}

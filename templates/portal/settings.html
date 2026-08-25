@@ -1,0 +1,28 @@
+{% extends "layouts/student.html" %}
+{% block title %}Settings — Nursilo{% endblock %}
+{% block content %}
+{% url 'portal:dashboard' as parent_href %}
+{% include "components/back_link.html" with back_href=parent_href back_label="dashboard" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Language and basic preference controls available now.</p>
+
+  <form method="post" action="{% url 'portal:settings' %}" class="form-stack" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="form-errors" role="alert">{{ form.non_field_errors }}</div>
+    {% endif %}
+    {% include "components/form_field.html" with field=form.full_name %}
+    {% include "components/form_field.html" with field=form.ui_locale %}
+    <div class="action-row">
+      <button type="submit" class="btn btn-primary">Save settings</button>
+    </div>
+  </form>
+
+  <section class="section" aria-labelledby="more-settings">
+    <h2 class="section-title" id="more-settings">Security settings</h2>
+    <div class="action-row">
+      <a class="btn btn-secondary" href="{% url 'accounts:password_change' %}">Change password</a>
+      <a class="btn btn-secondary" href="{% url 'accounts:devices' %}">Manage devices</a>
+    </div>
+  </section>
+{% endblock %}

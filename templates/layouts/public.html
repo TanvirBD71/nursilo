@@ -1,0 +1,12 @@
+﻿{% extends "base.html" %}
+{% load static %}
+{% block body_class %}layout-shell layout-public{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/public.css' %}">
+{% endblock %}
+{% block header %}
+  {% include "partials/public_header.html" %}
+{% endblock %}
+{% block footer %}
+  {% include "partials/public_footer.html" %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "layouts/error.html" %}
+{% block title %}Page not found — Nursilo{% endblock %}
+{% block content %}
+  <div class="error-panel">
+    <h1 class="page-title">{{ page_heading }}</h1>
+    <p class="page-lede">The page you requested could not be found.</p>
+    <div class="action-row">
+      {% if user.is_authenticated %}
+        <a class="btn btn-primary" href="{% url 'portal:dashboard' %}">Go to dashboard</a>
+      {% else %}
+        <a class="btn btn-primary" href="{% url 'accounts:login' %}">Sign in</a>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

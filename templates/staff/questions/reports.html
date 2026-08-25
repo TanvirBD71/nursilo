@@ -1,0 +1,42 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:questions' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Question bank" current_label=page_heading aria_label="Error reports" %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="page-header-actions">
+    <a class="btn btn-ghost" href="{% url 'staff:questions' %}">Back to question bank</a>
+  </p>
+</header>
+<div class="table-wrap" role="region" aria-label="Reports" tabindex="0">
+  <table class="data-table">
+    <thead><tr><th>Question</th><th>Reporter</th><th>Status</th><th>Update</th></tr></thead>
+    <tbody>
+      {% for report in page_obj %}
+      <tr>
+        <td><a href="{% url 'staff:question_detail' report.question_id %}">{{ report.question_id }}</a></td>
+        <td>{{ report.reporter.email }}</td>
+        <td>{% include "components/status_badge.html" with label=report.status tone="info" %}</td>
+        <td>
+          <form method="post" class="staff-inline-form">
+            {% csrf_token %}
+            <input type="hidden" name="report_id" value="{{ report.id }}">
+            <select name="status" aria-label="Status for report">
+              <option value="triaged">Triaged</option>
+              <option value="resolved">Resolved</option>
+              <option value="dismissed">Dismissed</option>
+            </select>
+            <input type="text" name="notes" placeholder="Notes" aria-label="Notes">
+            <button type="submit" class="btn btn-secondary">Save</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">No reports.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "staff/_pagination.html" %}
+{% endblock %}

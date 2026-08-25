@@ -1,0 +1,47 @@
+{% extends "layouts/student.html" %}
+{% load static %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/assessment.css' %}">
+{% endblock %}
+{% block content %}
+  <header class="page-header">
+    <h1 class="page-title">{{ page_heading }}</h1>
+    <p class="tagline">{{ tagline }}</p>
+  </header>
+
+  <div class="action-row">
+    <a class="btn btn-secondary" href="{{ history_href }}">Exam history</a>
+  </div>
+
+  <section aria-labelledby="exam-catalog-heading">
+    <h2 class="section-title" id="exam-catalog-heading">Available exams</h2>
+    {% if is_empty %}
+      {% include "components/empty_state.html" with title="No exams published" message="Published exams will appear here when available." %}
+    {% else %}
+      <ul class="practice-list">
+        {% for item in items %}
+          <li class="practice-list-item">
+            <h3 class="practice-list-title">
+              <a href="{{ item.href }}">{{ item.title }}</a>
+            </h3>
+            <p class="tagline">
+              {{ item.mode_label }}
+              · {{ item.question_count }} questions
+              {% if item.is_timed %}
+                · {{ item.time_limit_seconds }} seconds
+              {% else %}
+                · Untimed
+              {% endif %}
+              {% if item.requires_premium %} · Premium{% endif %}
+            </p>
+            <p>
+              <span class="exam-state exam-state-{{ item.state }}">{{ item.state_label }}</span>
+            </p>
+            <a class="btn btn-secondary" href="{{ item.href }}">View exam</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </section>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "layouts/error.html" %}
+{% block title %}Something went wrong — Nursilo{% endblock %}
+{% block content %}
+  <div class="error-panel">
+    <h1 class="page-title">{{ page_heading }}</h1>
+    <p class="page-lede">Please try again in a moment. If the problem continues, contact support.</p>
+    <div class="action-row">
+      <a class="btn btn-primary" href="{% url 'home' %}">Home</a>
+    </div>
+  </div>
+{% endblock %}

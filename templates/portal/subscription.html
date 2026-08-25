@@ -1,0 +1,34 @@
+{% extends "layouts/student.html" %}
+{% block title %}Subscription — Nursilo{% endblock %}
+{% block content %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Your current plan status. Payments and checkout are not available in this stage.</p>
+
+  <section class="dashboard-card section" aria-labelledby="plan-heading">
+    <h2 class="section-title" id="plan-heading">Current plan</h2>
+    <p>
+      {% include "components/status_badge.html" with label=subscription.label tone=subscription.is_premium|yesno:"premium,free" %}
+    </p>
+    <dl class="profile-dl">
+      <div>
+        <dt>State</dt>
+        <dd>{{ subscription.state }}</dd>
+      </div>
+      <div>
+        <dt>Premium expires</dt>
+        <dd>{{ subscription.premium_expires_at|default:"—" }}</dd>
+      </div>
+      <div>
+        <dt>Source</dt>
+        <dd>
+          {% if subscription.source == "default_free" %}
+            Default Free presentation (no subscription row yet)
+          {% else %}
+            Subscription record
+          {% endif %}
+        </dd>
+      </div>
+    </dl>
+    {% include "components/unavailable_state.html" with title="Checkout unavailable" message="Payment and upgrade flows are not implemented yet. This page only shows existing subscription state." %}
+  </section>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:learning_detail' kind obj.id as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Edit" current_label=page_heading aria_label="Learning preview" %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="page-header-actions">
+    <a class="btn btn-ghost" href="{% url 'staff:learning_detail' kind obj.id %}">Back to edit</a>
+  </p>
+</header>
+<article class="preview-panel staff-action-card">
+  <p class="tagline">Staff preview — unpublished content is not learner-visible.</p>
+  <h2>{{ title }}</h2>
+  <p>Kind: {{ kind }} · {% include "components/status_badge.html" with label=obj.editorial_state tone="info" %}</p>
+</article>
+{% endblock %}

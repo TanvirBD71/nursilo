@@ -1,0 +1,23 @@
+{% extends "layouts/student.html" %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block content %}
+  <header class="page-header">
+    <h1 class="page-title">{{ page_heading }}</h1>
+    <p class="tagline">{{ scope_label }}</p>
+  </header>
+
+  <p role="status">
+    You have answered {{ progress.answered }} of {{ progress.total }} questions
+    ({{ progress.unanswered }} unanswered).
+  </p>
+  <p>Submitting finalizes your answers on the server. You will not be able to change them afterward.</p>
+
+  <form method="post" action="{% url 'assessment:submit' attempt_id=attempt_id %}" class="stack-form">
+    {% csrf_token %}
+    <input type="hidden" name="confirm" value="true">
+    <div class="action-row">
+      <button type="submit" class="btn btn-primary">Confirm submit</button>
+      <a class="btn btn-secondary" href="{{ session_href }}">Back to session</a>
+    </div>
+  </form>
+{% endblock %}

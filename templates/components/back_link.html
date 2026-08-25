@@ -1,0 +1,8 @@
+{% if back_href and back_label %}
+<nav class="page-back" aria-label="Back">
+  <a class="back-link" href="{{ back_href }}">
+    <span class="back-link-icon" aria-hidden="true">{% include "components/icon.html" with name="arrow-left" size="sm" %}</span>
+    <span>Back to {{ back_label }}</span>
+  </a>
+</nav>
+{% endif %}

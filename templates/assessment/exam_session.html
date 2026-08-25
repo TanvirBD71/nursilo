@@ -1,0 +1,120 @@
+{% extends "layouts/exam.html" %}
+{% load static %}
+{% block title %}Question {{ position }} — Exam — Nursilo{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/assessment.css' %}">
+{% endblock %}
+{% block content %}
+  <header class="exam-session-header" aria-labelledby="exam-session-title">
+    <h1 class="page-title" id="exam-session-title">{{ exam_title }}</h1>
+    <p class="practice-progress" role="status" aria-live="polite">
+      Question {{ position }} of {{ total }} · Answered {{ answered }} of {{ total }}
+    </p>
+    {% if timer_is_timed %}
+      <p class="exam-timer"
+         id="exam-timer"
+         role="timer"
+         aria-live="polite"
+         aria-atomic="true"
+         data-remaining="{{ timer_remaining_seconds|default:0 }}"
+         data-sync-href="{{ timer_sync_href }}">
+        Time remaining (guide):
+        <span class="exam-timer-display" data-timer-display>
+          {{ timer_remaining_seconds|default:0 }}s
+        </span>
+      </p>
+      <p class="visually-hidden">
+        The countdown is a presentation aid. Server remaining time is authoritative.
+      </p>
+    {% endif %}
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-fill" style="width: {% widthratio answered total 100 %}%;"></div>
+    </div>
+  </header>
+
+  <nav class="question-navigator" aria-label="Question navigator">
+    <ol class="question-navigator-list">
+      {% for nav in navigator %}
+        <li>
+          <a class="question-nav-link"
+             href="{{ nav.href }}"
+             aria-current="{% if nav.current %}page{% else %}false{% endif %}"
+             data-answered="{% if nav.answered %}true{% else %}false{% endif %}">
+            <span class="visually-hidden">Question </span>{{ nav.position }}
+            {% if nav.answered %}
+              <span class="visually-hidden">(answered)</span>
+            {% else %}
+              <span class="visually-hidden">(unanswered)</span>
+            {% endif %}
+          </a>
+        </li>
+      {% endfor %}
+    </ol>
+  </nav>
+
+  <article class="question-region" aria-labelledby="question-stem-heading">
+    <h2 class="section-title" id="question-stem-heading">Question {{ position }}</h2>
+    {% if clinical_scenario_body %}
+      <div class="clinical-scenario reading-measure">{{ clinical_scenario_body|linebreaks }}</div>
+    {% endif %}
+    <div class="question-stem reading-measure">{{ stem|linebreaks }}</div>
+
+    <form method="post" action="{{ answer_href }}" class="stack-form answer-form">
+      {% csrf_token %}
+      {% if is_true_false %}
+      <fieldset class="form-fieldset">
+        <legend>Mark each statement True or False (+0.2 each correct)</legend>
+        {% for statement in statements %}
+          <div class="choice-row answer-statement">
+            <p><span class="option-key" aria-hidden="true">{{ statement.key }}.</span> {{ statement.text }}</p>
+            <label class="answer-option">
+              <input type="radio" name="truth_{{ statement.key }}" value="true"
+                     {% if statement.selected is True %}checked{% endif %}> True
+            </label>
+            <label class="answer-option">
+              <input type="radio" name="truth_{{ statement.key }}" value="false"
+                     {% if statement.selected is False %}checked{% endif %}> False
+            </label>
+          </div>
+        {% empty %}
+          <p role="alert">This question has no statements available.</p>
+        {% endfor %}
+      </fieldset>
+      {% else %}
+      <fieldset class="form-fieldset">
+        <legend>Select an answer</legend>
+        {% for option in options %}
+          <label class="choice-row answer-option">
+            <input type="radio"
+                   name="option_key"
+                   value="{{ option.key }}"
+                   {% if option.selected %}checked{% endif %}>
+            <span>
+              <span class="option-key" aria-hidden="true">{{ option.key }}.</span>
+              {{ option.label }}
+            </span>
+          </label>
+        {% empty %}
+          <p role="alert">This question has no options available.</p>
+        {% endfor %}
+      </fieldset>
+      {% endif %}
+
+      <div class="action-row practice-session-actions">
+        <button type="submit" name="nav" value="stay" class="btn btn-primary">Save answer</button>
+        {% if prev_href %}
+          <button type="submit" name="nav" value="prev" class="btn btn-secondary">Previous</button>
+        {% endif %}
+        {% if next_href %}
+          <button type="submit" name="nav" value="next" class="btn btn-secondary">Next</button>
+        {% endif %}
+        <a class="btn btn-secondary" href="{{ submit_href }}">Submit exam</a>
+      </div>
+    </form>
+  </article>
+{% endblock %}
+{% block extra_body %}
+  {% if timer_is_timed %}
+    <script src="{% static 'js/exam_timer.js' %}" defer></script>
+  {% endif %}
+{% endblock %}

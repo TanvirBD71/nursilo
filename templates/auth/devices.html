@@ -1,0 +1,31 @@
+{% extends "layouts/auth.html" %}
+{% block title %}Devices — Nursilo{% endblock %}
+{% block content %}
+{% include "components/back_link.html" %}
+<h1 class="page-title">Active devices</h1>
+<p class="page-lede">Sessions currently signed in to your Nursilo account.</p>
+<ul class="auth-device-list">
+  {% for s in sessions %}
+    <li class="auth-device-item">
+      <div class="auth-device-copy">
+        <strong>{{ s.device_name }}</strong>
+        <span class="tagline">{{ s.browser }} / {{ s.operating_system }}</span>
+        {% if current_session and current_session.id == s.id %}
+          <span class="status-badge" data-tone="info">This device</span>
+        {% endif %}
+      </div>
+      <form method="post" action="{% url 'accounts:revoke_device' s.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary">Sign out</button>
+      </form>
+    </li>
+  {% empty %}
+    <li class="auth-device-item">No active devices.</li>
+  {% endfor %}
+</ul>
+<p class="auth-links">
+  <a href="{% url 'accounts:logout_others' %}">Sign out other devices</a>
+  <span class="auth-links-sep" aria-hidden="true">·</span>
+  <a href="{% url 'accounts:logout_all' %}">Sign out all devices</a>
+</p>
+{% endblock %}

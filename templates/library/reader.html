@@ -1,0 +1,58 @@
+{% extends "layouts/reader.html" %}
+{% block title %}{{ page_heading }} — Reader — Nursilo{% endblock %}
+{% block content %}
+  <div class="reader-toolbar" role="toolbar" aria-label="Reader controls">
+    <div class="reader-toolbar-main">
+      <h1 class="reader-title">{{ title }}</h1>
+      {% if author_name %}
+        <p class="library-meta">{{ author_name }}</p>
+      {% endif %}
+      <p class="library-meta">Reading state: {{ reading_state }}</p>
+    </div>
+    <div class="reader-toolbar-actions">
+      <form method="post" action="{{ bookmark_href }}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit" class="btn btn-secondary">
+          {% if bookmarked %}Remove bookmark{% else %}Bookmark{% endif %}
+        </button>
+      </form>
+      {% if can_download and download_href %}
+        <a class="btn btn-secondary" href="{{ download_href }}">Download</a>
+      {% endif %}
+      <a class="btn btn-secondary" href="{{ detail_href }}">Book details</a>
+    </div>
+  </div>
+
+  <section class="reader-content-region" aria-label="Book content">
+    {% if locked %}
+      {% include "components/unavailable_state.html" with title="Premium required" message=lock_message %}
+      <p><a class="btn btn-secondary" href="{% url 'portal:subscription' %}">View subscription</a></p>
+    {% elif not allowed %}
+      {% include "components/unavailable_state.html" with title="Unavailable" message="This book cannot be opened right now." %}
+    {% elif missing_file and not body_text and not body_html and not stream_href %}
+      {% include "components/empty_state.html" with title="Content unavailable" message="The entitled file is not available on the server yet." %}
+    {% else %}
+      {% if body_html %}
+        <article class="reader-body reading-measure">{{ body_html|safe }}</article>
+      {% elif body_text %}
+        <article class="reader-body reading-measure">{{ body_text|linebreaks }}</article>
+      {% elif stream_href %}
+        {% if format == "image" %}
+          <figure class="reader-media">
+            <img src="{{ stream_href }}" alt="{{ title }}">
+          </figure>
+        {% elif format == "pdf" %}
+          <p class="page-lede">Open the PDF in your browser viewer (server-authorized stream).</p>
+          <p><a class="btn btn-primary" href="{{ stream_href }}">Open PDF stream</a></p>
+          <iframe class="reader-frame" title="{{ title }} PDF" src="{{ stream_href }}"></iframe>
+        {% else %}
+          <p class="page-lede">This format opens through a server-authorized stream.</p>
+          <p><a class="btn btn-primary" href="{{ stream_href }}">Open content stream</a></p>
+        {% endif %}
+      {% else %}
+        {% include "components/empty_state.html" with title="Nothing to display" message="No readable content is available for this book yet." %}
+      {% endif %}
+    {% endif %}
+  </section>
+{% endblock %}

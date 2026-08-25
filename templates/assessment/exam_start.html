@@ -1,0 +1,37 @@
+{% extends "layouts/student.html" %}
+{% load static %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/assessment.css' %}">
+{% endblock %}
+{% block content %}
+  <header class="page-header">
+    <h1 class="page-title">{{ page_heading }}</h1>
+    <p class="tagline">{{ message }}</p>
+  </header>
+
+  <section aria-labelledby="start-confirm-heading">
+    <h2 class="section-title" id="start-confirm-heading">Confirm</h2>
+    <p>
+      {{ question_count }} questions
+      {% if is_timed %} · {{ time_limit_seconds }} seconds{% else %} · Untimed{% endif %}.
+      Starting creates or resumes a server-owned attempt. Refreshing will not create a duplicate while an attempt is in progress.
+    </p>
+
+    {% if can_resume or can_start %}
+      <form method="post" action="{{ start_href }}" class="stack-form">
+        {% csrf_token %}
+        <input type="hidden" name="confirm" value="true">
+        <div class="action-row">
+          <button type="submit" class="btn btn-primary">
+            {% if can_resume %}Resume exam{% else %}Begin exam{% endif %}
+          </button>
+          <a class="btn btn-secondary" href="{% url 'exams:detail' exam_id=exam_id %}">Cancel</a>
+        </div>
+      </form>
+    {% else %}
+      <p role="status">{{ message }}</p>
+      <a class="btn btn-secondary" href="{{ catalog_href }}">Back to catalog</a>
+    {% endif %}
+  </section>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "layouts/student.html" %}
+{% load static %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/assessment.css' %}">
+{% endblock %}
+{% block content %}
+  <header class="page-header">
+    <h1 class="page-title">{{ page_heading }}</h1>
+    <p class="tagline">{{ exam_title }}</p>
+  </header>
+
+  <section aria-labelledby="confirm-submit-heading">
+    <h2 class="section-title" id="confirm-submit-heading">Confirm submit</h2>
+    <p>
+      Answered {{ progress.answered }} of {{ progress.total }}
+      ({{ progress.unanswered }} unanswered).
+      Submission is final and scored on the server.
+    </p>
+    <form method="post" action="{% url 'exams:submit' attempt_id=attempt_id %}" class="stack-form">
+      {% csrf_token %}
+      <input type="hidden" name="confirm" value="true">
+      <div class="action-row">
+        <button type="submit" class="btn btn-primary">Confirm submit</button>
+        <a class="btn btn-secondary" href="{{ session_href }}">Return to exam</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

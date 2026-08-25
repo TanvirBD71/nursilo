@@ -1,0 +1,45 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:dashboard' as parent_href %}
+{% include "components/back_link.html" with back_href=parent_href back_label="staff dashboard" %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="page-lede">Shared editorial states — Draft, Review, Approved, Published. Question-bank bulk workflow lives on the question bank.</p>
+</header>
+<div class="staff-queue-grid">
+  <section class="staff-queue-card" aria-labelledby="q-courses-review">
+    <h2 id="q-courses-review">Courses in review</h2>
+    <ul>
+      {% for c in courses_review %}
+        <li><a href="{% url 'staff:learning_detail' 'course' c.id %}">{% with t=c.translations.all|first %}{{ t.title|default:c.id }}{% endwith %}</a></li>
+      {% empty %}<li>None.</li>{% endfor %}
+    </ul>
+  </section>
+  <section class="staff-queue-card" aria-labelledby="q-courses-approved">
+    <h2 id="q-courses-approved">Courses approved (ready to publish)</h2>
+    <ul>
+      {% for c in courses_approved %}
+        <li><a href="{% url 'staff:learning_detail' 'course' c.id %}">{% with t=c.translations.all|first %}{{ t.title|default:c.id }}{% endwith %}</a></li>
+      {% empty %}<li>None.</li>{% endfor %}
+    </ul>
+  </section>
+  <section class="staff-queue-card" aria-labelledby="q-questions-review">
+    <h2 id="q-questions-review">Questions in review</h2>
+    <ul>
+      {% for q in questions_review %}
+        <li><a href="{% url 'staff:question_detail' q.id %}">{% with t=q.current_version.translations.all|first %}{{ t.stem|truncatechars:60|default:q.id }}{% endwith %}</a></li>
+      {% empty %}<li>None.</li>{% endfor %}
+    </ul>
+    <p><a class="btn btn-secondary" href="{% url 'staff:questions' %}?state=review">Open question bank review filter</a></p>
+  </section>
+  <section class="staff-queue-card" aria-labelledby="q-books-review">
+    <h2 id="q-books-review">Books in review</h2>
+    <ul>
+      {% for b in books_review %}
+        <li><a href="{% url 'staff:library_detail' b.id %}">{% with t=b.translations.all|first %}{{ t.title|default:b.id }}{% endwith %}</a></li>
+      {% empty %}<li>None.</li>{% endfor %}
+    </ul>
+  </section>
+</div>
+{% endblock %}

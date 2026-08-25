@@ -1,0 +1,40 @@
+{% extends "layouts/student.html" %}
+{% block title %}Edit profile — Nursilo{% endblock %}
+{% block content %}
+{% url 'portal:profile' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Profile" current_label=page_heading aria_label="Profile" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Update your identity, academic session, and contact details. Blood group is never inferred.</p>
+
+  <form method="post" action="{% url 'portal:profile_edit' %}" class="form-stack form-stack--register" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="form-errors" role="alert">{{ form.non_field_errors }}</div>
+    {% endif %}
+    <fieldset class="form-section">
+      <legend class="form-section-title">Account</legend>
+      {% include "components/form_field.html" with field=form.full_name show_optional=True %}
+      {% include "components/form_field.html" with field=form.ui_locale %}
+    </fieldset>
+    <fieldset class="form-section">
+      <legend class="form-section-title">Personal</legend>
+      {% include "components/form_field.html" with field=form.mobile_number %}
+      {% include "components/form_field.html" with field=form.blood_group %}
+    </fieldset>
+    <fieldset class="form-section">
+      <legend class="form-section-title">Academic</legend>
+      {% include "components/form_field.html" with field=form.academic_session %}
+    </fieldset>
+    <fieldset class="form-section">
+      <legend class="form-section-title">Contact and social</legend>
+      <p class="tagline">Optional. Social accounts are never required.</p>
+      {% include "components/form_field.html" with field=form.address show_optional=True %}
+      {% include "components/form_field.html" with field=form.social_profile_url show_optional=True %}
+      {% include "components/form_field.html" with field=form.linkedin_url show_optional=True %}
+    </fieldset>
+    <div class="action-row">
+      <button type="submit" class="btn btn-primary">Save profile</button>
+      <a class="btn btn-secondary" href="{% url 'portal:profile' %}">Cancel</a>
+    </div>
+  </form>
+{% endblock %}

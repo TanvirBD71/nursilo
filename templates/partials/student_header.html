@@ -1,0 +1,44 @@
+﻿<header class="student-header">
+  <div class="student-header-inner">
+    <div class="student-header-brand">
+      {% url 'portal:dashboard' as brand_href %}
+      {% include "components/site_brand.html" with brand_href=brand_href %}
+      <p class="tagline">Learn. Practice. Succeed.</p>
+    </div>
+    <div class="student-header-utils">
+      {% if subscription_badge %}
+        {% include "components/status_badge.html" with label=subscription_badge.label tone=subscription_badge.is_premium|yesno:"premium,free" %}
+      {% endif %}
+      {% if show_staff_console_link %}
+        <a class="header-util-link" href="{% url 'staff:dashboard' %}">Staff console</a>
+      {% endif %}
+      {% if unread_notification_count %}
+        <a class="header-util-link" href="{% url 'portal:notifications' %}" aria-label="Notifications, {{ unread_notification_count }} unread">
+          Notifications
+          <span class="status-badge" data-tone="info">{{ unread_notification_count }} unread</span>
+        </a>
+      {% else %}
+        <a class="header-util-link" href="{% url 'portal:notifications' %}">Notifications</a>
+      {% endif %}
+      <a class="header-util-link" href="{% url 'portal:profile' %}">
+        <span class="header-util-icon" aria-hidden="true">{% include "components/icon.html" with name="user" size="sm" %}</span>
+        <span>{{ request.user.full_name|default:request.user.email }}</span>
+      </a>
+      <a class="header-util-link" href="{% url 'accounts:logout' %}">Sign out</a>
+      <button
+        type="button"
+        class="nav-toggle student-nav-toggle"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="student-primary-nav"
+        aria-label="Open menu"
+        data-closed-label="Open menu"
+        data-open-label="Close menu"
+      >
+        <span class="nav-toggle-icon nav-toggle-icon--menu" aria-hidden="true">{% include "components/icon.html" with name="menu" size="sm" %}</span>
+        <span class="nav-toggle-icon nav-toggle-icon--close" hidden aria-hidden="true">{% include "components/icon.html" with name="close" size="sm" %}</span>
+        <span data-nav-toggle-text>Menu</span>
+      </button>
+    </div>
+  </div>
+</header>

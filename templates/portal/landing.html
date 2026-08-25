@@ -1,0 +1,226 @@
+﻿{% extends "layouts/public.html" %}
+{% load static %}
+{% block title %}Nursilo — Learn. Practice. Succeed.{% endblock %}
+{% block meta_description %}Nursilo helps nursing students learn structured content, practice with blueprint-aware questions, and prepare for license exams — calmly and clearly.{% endblock %}
+{% block content %}
+  <section class="landing-hero" aria-labelledby="landing-hero-title">
+    <div class="landing-hero-art" aria-hidden="true">
+      <svg class="landing-hero-ecg" viewBox="0 0 1200 80" preserveAspectRatio="none" focusable="false">
+        <path d="M0 48h120l20-22 18 46 22-62 18 38h90l16-18 14 38 18-48 16 28h140l20-22 18 46 22-62 18 38h200l16-16 14 36 18-46 16 26H1200"/>
+      </svg>
+      <span class="landing-float landing-float--1">{% include "components/icon.html" with name="stethoscope" size="lg" %}</span>
+      <span class="landing-float landing-float--2">{% include "components/icon.html" with name="heartbeat" size="md" %}</span>
+      <span class="landing-float landing-float--3">{% include "components/icon.html" with name="cross" size="md" %}</span>
+      <span class="landing-float landing-float--4">{% include "components/icon.html" with name="dna" size="lg" %}</span>
+      <span class="landing-float landing-float--5">{% include "components/icon.html" with name="capsule" size="sm" %}</span>
+      <span class="landing-float landing-float--6">{% include "components/icon.html" with name="microscope" size="md" %}</span>
+      <span class="landing-float landing-float--7">{% include "components/icon.html" with name="lungs" size="sm" %}</span>
+      <span class="landing-float landing-float--8">{% include "components/icon.html" with name="book" size="md" %}</span>
+    </div>
+    <div class="landing-inner landing-hero-grid">
+      <div class="landing-hero-copy">
+        <p class="landing-kicker">Nursing education &amp; license-exam prep</p>
+        <h1 class="landing-display" id="landing-hero-title">Learn nursing. Practice with purpose.</h1>
+        <p class="landing-hero-lede">
+          Structured lessons, realistic questions, and calm exam simulation for nursing students preparing for license exams — a clear study path you can trust.
+        </p>
+        <div class="landing-cta-row">
+          <a class="btn btn-cta" href="{% url 'accounts:login' %}?next={% url 'assessment:entry' %}">
+            <span class="btn-icon" aria-hidden="true">{% include "components/icon.html" with name="target" size="sm" %}</span>
+            Start Practicing
+            <span class="btn-arrow" aria-hidden="true">{% include "components/icon.html" with name="arrow-right" size="sm" %}</span>
+          </a>
+          <a class="btn btn-secondary btn-lg" href="{% url 'accounts:register' %}">Create free account</a>
+        </div>
+        <p class="landing-hero-note">
+          New to Nursilo?
+          <a href="#courses">Explore courses</a>
+        </p>
+      </div>
+      <div class="landing-hero-visual">
+        <div class="landing-hero-panel">
+          <div class="landing-hero-panel-art" aria-hidden="true">
+            {% include "partials/study_illustration.html" %}
+          </div>
+          <p class="landing-hero-panel-title">Learn. Practice. Succeed.</p>
+          <ul class="landing-hero-panel-list">
+            <li>
+              <span class="landing-chip-icon" aria-hidden="true">{% include "components/icon.html" with name="graduation" size="sm" %}</span>
+              Structured courses
+            </li>
+            <li>
+              <span class="landing-chip-icon landing-chip-icon--info" aria-hidden="true">{% include "components/icon.html" with name="checklist" size="sm" %}</span>
+              Blueprint-aware practice
+            </li>
+            <li>
+              <span class="landing-chip-icon landing-chip-icon--accent" aria-hidden="true">{% include "components/icon.html" with name="target" size="sm" %}</span>
+              Timed exam simulation
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section landing-section--motif-cross" id="discover" aria-labelledby="discover-title">
+    <div class="landing-inner">
+      <h2 class="landing-section-title" id="discover-title">What you can do in Nursilo</h2>
+      <p class="landing-section-lede">One product for nursing education and license-exam preparation — from first lesson to timed assessment.</p>
+      <div class="landing-card-grid">
+        <article class="landing-card landing-card--learn" id="learn" aria-labelledby="card-learn-title">
+          <span class="landing-icon" aria-hidden="true">{% include "components/icon.html" with name="graduation" %}</span>
+          <h3 class="landing-card-title" id="card-learn-title">Structured Learning</h3>
+          <p>Follow courses, subjects, units, and lessons in a clear hierarchy so study sessions stay organized.</p>
+        </article>
+        <article class="landing-card landing-card--practice" id="practice" aria-labelledby="card-practice-title">
+          <span class="landing-icon" aria-hidden="true">{% include "components/icon.html" with name="brain" %}</span>
+          <h3 class="landing-card-title" id="card-practice-title">Practice Q Bank</h3>
+          <p>Work through practice questions in a focused session flow — review explanations after you submit, then improve from results.</p>
+        </article>
+        <article class="landing-card landing-card--exam" id="exams-prep" aria-labelledby="card-exam-title">
+          <span class="landing-icon" aria-hidden="true">{% include "components/icon.html" with name="clipboard" %}</span>
+          <h3 class="landing-card-title" id="card-exam-title">License Exam Prep</h3>
+          <p>Prepare with structured content and exam-style practice aligned to how Nursilo organizes subjects and blueprints.</p>
+        </article>
+        <article class="landing-card landing-card--library" id="library" aria-labelledby="card-library-title">
+          <span class="landing-icon" aria-hidden="true">{% include "components/icon.html" with name="reading" %}</span>
+          <h3 class="landing-card-title" id="card-library-title">Library</h3>
+          <p>Read nursing reference material in the library reader, with Free and Premium titles presented honestly.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section landing-section--soft landing-section--motif-ecg" id="why" aria-labelledby="why-title">
+    <div class="landing-inner">
+      <h2 class="landing-section-title" id="why-title">Why Nursilo</h2>
+      <p class="landing-section-lede">A simple loop that supports steady progress without noisy gamification.</p>
+      <ol class="landing-steps">
+        <li class="landing-card--learn">
+          <span class="landing-icon" aria-hidden="true">{% include "components/icon.html" with name="book" %}</span>
+          <h3 class="landing-card-title">Learn</h3>
+          <p>Study published lessons and materials in a calm reading layout.</p>
+        </li>
+        <li class="landing-card--practice">
+          <span class="landing-icon" aria-hidden="true">{% include "components/icon.html" with name="question" %}</span>
+          <h3 class="landing-card-title">Practice</h3>
+          <p>Answer practice questions and review results when the attempt is complete.</p>
+        </li>
+        <li class="landing-card--exam">
+          <span class="landing-icon" aria-hidden="true">{% include "components/icon.html" with name="target" %}</span>
+          <h3 class="landing-card-title">Assess</h3>
+          <p>Sit timed exam simulations when you are ready to test under pressure.</p>
+        </li>
+        <li class="landing-card--progress">
+          <span class="landing-icon" aria-hidden="true">{% include "components/icon.html" with name="chart" %}</span>
+          <h3 class="landing-card-title">Improve</h3>
+          <p>Return to weak areas with history, review, and continued study.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="landing-section" id="courses" aria-labelledby="courses-title">
+    <div class="landing-inner">
+      <h2 class="landing-section-title" id="courses-title">Courses &amp; subjects</h2>
+      <p class="landing-section-lede">Browse published learning taxonomy from the Nursilo catalog. Sign in to open full course pages.</p>
+      {% if landing.courses %}
+        <div class="landing-card-grid">
+          {% for course in landing.courses %}
+            <article class="landing-card landing-card--learn" aria-labelledby="course-{{ forloop.counter }}">
+              <span class="landing-icon" aria-hidden="true">{% include "components/icon.html" with name=course.motif %}</span>
+              <h3 class="landing-card-title" id="course-{{ forloop.counter }}">{{ course.title }}</h3>
+              {% if course.summary %}<p>{{ course.summary }}</p>{% endif %}
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        {% include "components/empty_state.html" with title="Courses coming soon" message="Published courses will appear here as the learning catalog grows." %}
+      {% endif %}
+
+      {% if landing.subjects %}
+        <h3 class="landing-subsection-title">Subjects</h3>
+        <ul class="landing-subject-list">
+          {% for subject in landing.subjects %}
+            <li>
+              <span class="landing-icon landing-icon--subject" aria-hidden="true">{% include "components/icon.html" with name=subject.motif %}</span>
+              <span class="landing-subject-copy">
+                <span class="landing-subject-title">{{ subject.title }}</span>
+                {% if subject.parent_title %}
+                  <span class="landing-subject-meta">in {{ subject.parent_title }}</span>
+                {% endif %}
+                {% if subject.summary %}<p class="landing-subject-summary">{{ subject.summary }}</p>{% endif %}
+              </span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      <p class="landing-inline-cta">
+        <a class="btn btn-secondary" href="{% url 'accounts:login' %}?next={% url 'learning:catalog' %}">Open course catalog</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="landing-section landing-section--soft landing-section--motif-cross" id="exams" aria-labelledby="assess-title">
+    <div class="landing-inner">
+      <h2 class="landing-section-title" id="assess-title">Practice &amp; exams</h2>
+      <p class="landing-section-lede">Blueprint-aware practice and exam simulation help you prepare with the same product flows you will use after you sign in.</p>
+      <div class="landing-card-grid landing-card-grid--two">
+        <article class="landing-card landing-card--practice" aria-labelledby="practice-session-title">
+          <span class="landing-icon" aria-hidden="true">{% include "components/icon.html" with name="checklist" %}</span>
+          <h3 class="landing-card-title" id="practice-session-title">Practice sessions</h3>
+          <p>Set up practice, answer questions one by one, submit when ready, then review explanations and results.</p>
+          <p class="landing-card-cta">
+            <a class="btn btn-cta" href="{% url 'accounts:login' %}?next={% url 'assessment:entry' %}">
+              <span class="btn-icon" aria-hidden="true">{% include "components/icon.html" with name="target" size="sm" %}</span>
+              Start Practicing
+              <span class="btn-arrow" aria-hidden="true">{% include "components/icon.html" with name="arrow-right" size="sm" %}</span>
+            </a>
+          </p>
+        </article>
+        <article class="landing-card landing-card--exam" aria-labelledby="exam-sim-title">
+          <span class="landing-icon" aria-hidden="true">{% include "components/icon.html" with name="certificate" %}</span>
+          <h3 class="landing-card-title" id="exam-sim-title">Exam simulation</h3>
+          <p>Timed exams use a focused layout with a clear timer and submit path — built for license-exam style preparation.</p>
+          <p><a href="{% url 'accounts:login' %}?next={% url 'exams:catalog' %}">Sign in to view exams</a></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section" id="pricing" aria-labelledby="pricing-title">
+    <div class="landing-inner">
+      <h2 class="landing-section-title" id="pricing-title">Premium</h2>
+      <p class="landing-section-lede">One honest plan for V1 — no fake scarcity, urgency, or limited-time pressure.</p>
+      <article class="landing-pricing landing-card--premium" aria-labelledby="plan-annual">
+        <span class="landing-icon" aria-hidden="true">{% include "components/icon.html" with name="shield" %}</span>
+        <h3 class="landing-card-title" id="plan-annual">{{ landing.premium_plan.name }}</h3>
+        <p class="landing-price" aria-label="Price {{ landing.premium_plan.display_price }} for {{ landing.premium_plan.duration_days }} days">
+          <span class="landing-price-amount">{{ landing.premium_plan.display_price }}</span>
+          <span class="landing-price-period">BDT · {{ landing.premium_plan.duration_days }} days</span>
+        </p>
+        <p>{{ landing.premium_plan.description }}</p>
+        <div class="landing-cta-row">
+          <a class="btn btn-primary" href="{% url 'accounts:register' %}">Create free account</a>
+          <a class="btn btn-secondary" href="{% url 'accounts:login' %}?next={% url 'billing:pricing' %}">View pricing after sign-in</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="landing-section landing-section--final" aria-labelledby="final-cta-title">
+    <div class="landing-final-art" aria-hidden="true">
+      <span class="landing-float landing-float--final-1">{% include "components/icon.html" with name="star" size="md" %}</span>
+      <span class="landing-float landing-float--final-2">{% include "components/icon.html" with name="cross" size="sm" %}</span>
+      <span class="landing-float landing-float--final-3">{% include "components/icon.html" with name="heartbeat" size="md" %}</span>
+    </div>
+    <div class="landing-inner landing-final">
+      <h2 class="landing-section-title" id="final-cta-title">Begin your study</h2>
+      <p class="landing-section-lede">Create a free Nursilo account and start learning at your own pace.</p>
+      <div class="landing-cta-row">
+        <a class="btn btn-primary" href="{% url 'accounts:register' %}">Create free account</a>
+        <a class="btn btn-secondary" href="{% url 'accounts:login' %}">Sign in</a>
+      </div>
+    </div>
+  </section>
+{% endblock %}

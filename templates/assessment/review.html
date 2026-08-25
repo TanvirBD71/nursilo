@@ -1,0 +1,25 @@
+{% extends "layouts/student.html" %}
+{% load static %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/assessment.css' %}">
+{% endblock %}
+{% block content %}
+  {% include "components/breadcrumbs.html" with parent_href=result_href parent_label="Result" current_label=page_heading aria_label="Practice review" %}
+  <header class="page-header">
+    <h1 class="page-title">{{ page_heading }}</h1>
+    <p class="tagline">{{ scope_label }}</p>
+  </header>
+
+  <p class="review-score-line">
+    Score {{ score_summary.score|default:0 }} / {{ score_summary.total|default:0 }}
+    ({{ score_summary.percent_correct|default:0 }}%)
+  </p>
+
+  {% include "assessment/partials/review_items.html" %}
+
+  <div class="action-row">
+    <a class="btn btn-secondary" href="{{ result_href }}">Back to result</a>
+    <a class="btn btn-secondary" href="{{ history_href }}">History</a>
+  </div>
+{% endblock %}

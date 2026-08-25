@@ -1,0 +1,37 @@
+{% extends "layouts/auth.html" %}
+{% block title %}Sign in — Nursilo{% endblock %}
+{% block content %}
+{% include "components/back_link.html" %}
+<h1 class="page-title">Sign in</h1>
+<p class="page-lede">Welcome back. Continue learning, practice, and exam preparation.</p>
+{% if session_expired %}
+  <div class="feedback-region" role="alert">
+    <ul class="feedback-list">
+      <li class="feedback-item" data-level="warning">Your session expired. Please sign in again.</li>
+    </ul>
+  </div>
+{% endif %}
+<form method="post" action="{% url 'accounts:login' %}" class="form-stack" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="form-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+  {{ form.next }}
+  {% include "components/form_field.html" with field=form.email %}
+  {% include "components/form_field.html" with field=form.password %}
+  <div class="form-field form-field--check">
+    <label class="filter-check" for="{{ form.remember_me.id_for_label }}">
+      {{ form.remember_me }}
+      <span>{{ form.remember_me.label }}</span>
+    </label>
+    <p class="tagline">Keep me signed in on this device. Does not store your password.</p>
+    {% if form.remember_me.errors %}
+      <p class="field-error" role="alert">{{ form.remember_me.errors|striptags }}</p>
+    {% endif %}
+  </div>
+  <button type="submit" class="btn btn-primary">Sign in</button>
+</form>
+<p class="auth-links">
+  <a href="{% url 'accounts:password_reset_request' %}">Forgot password</a>
+  <span class="auth-links-sep" aria-hidden="true">·</span>
+  <a href="{% url 'accounts:register' %}">Create account</a>
+</p>
+{% endblock %}

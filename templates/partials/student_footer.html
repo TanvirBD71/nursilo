@@ -1,0 +1,17 @@
+<footer class="student-footer">
+  <div class="student-footer-inner">
+    <div class="footer-brand-block">
+      {% url 'portal:dashboard' as brand_href %}
+      {% include "components/site_brand.html" with brand_href=brand_href %}
+      <p class="tagline">Learn. Practice. Succeed.</p>
+    </div>
+    <nav class="footer-nav" aria-label="Student footer">
+      <a href="{% url 'portal:profile' %}">Profile</a>
+      <a href="{% url 'accounts:devices' %}">Security</a>
+      <a href="{% url 'portal:settings' %}">Settings</a>
+    </nav>
+  </div>
+  <div class="footer-legal">
+    <p>&copy; {% now "Y" %} Nursilo. All rights reserved.</p>
+  </div>
+</footer>

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block body_class %}layout-shell layout-exam{% endblock %}
+{% block header %}
+  <header class="exam-shell-header">
+    <div class="exam-shell-inner">
+      {% url 'exams:catalog' as brand_href %}
+      {% include "components/site_brand.html" with brand_href=brand_href %}
+      <p class="exam-shell-tagline">Exam focus mode</p>
+      <a class="btn btn-secondary" href="{% url 'exams:catalog' %}">Exit to exams</a>
+    </div>
+  </header>
+{% endblock %}
+{% block footer %}
+  <footer class="exam-shell-footer">
+    <div class="exam-shell-inner">
+      <p>Answers and remaining time are confirmed by the server. The on-screen timer is a guide only.</p>
+    </div>
+  </footer>
+{% endblock %}

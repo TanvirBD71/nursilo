@@ -1,0 +1,23 @@
+{% extends "layouts/student.html" %}
+{% load static %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/assessment.css' %}">
+{% endblock %}
+{% block content %}
+  {% url 'exams:catalog' as parent_href %}
+  {% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Exam catalog" current_label=page_heading aria_label="Exams" %}
+  <header class="page-header">
+    <h1 class="page-title">{{ page_heading }}</h1>
+    <p class="tagline">{{ exam_title }}</p>
+  </header>
+
+  {% include "assessment/partials/score_cards.html" %}
+
+  <div class="action-row">
+    <a class="btn btn-primary" href="{{ review_href }}">Review answers</a>
+    <a class="btn btn-secondary" href="{{ detail_href }}">Exam detail</a>
+    <a class="btn btn-secondary" href="{{ history_href }}">History</a>
+    <a class="btn btn-secondary" href="{{ catalog_href }}">Catalog</a>
+  </div>
+{% endblock %}

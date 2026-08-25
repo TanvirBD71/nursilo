@@ -1,0 +1,22 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:users' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Users" current_label=page_heading aria_label="Users" %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="tagline">ID: {{ target_user.id }}</p>
+  <p class="page-header-actions">
+    <a class="btn btn-ghost" href="{% url 'staff:users' %}">Back to users</a>
+  </p>
+</header>
+<form method="post" class="staff-form" novalidate>
+  {% csrf_token %}
+  {% for field in form %}
+    {% include "components/form_field.html" with field=field %}
+  {% endfor %}
+  <div class="filter-actions">
+    <button type="submit" class="btn btn-primary">Update user</button>
+  </div>
+</form>
+{% endblock %}

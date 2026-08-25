@@ -1,0 +1,51 @@
+{% extends "layouts/student.html" %}
+{% block title %}Billing history — Nursilo{% endblock %}
+{% block content %}
+{% url 'billing:current' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Subscription" current_label=page_heading aria_label="Billing" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Summary of your payment attempts. This is not a tax invoice.</p>
+
+  {% if is_empty %}
+    {% include "components/empty_state.html" with title="No billing history" message="You have not started a checkout yet." %}
+  {% else %}
+    <div class="table-wrap" role="region" aria-label="Billing history" tabindex="0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Plan</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Status</th>
+            <th scope="col">Reference</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payment in payments %}
+          <tr>
+            <td>{{ payment.created_at }}</td>
+            <td>{{ payment.plan_name }}</td>
+            <td>{{ payment.amount }} {{ payment.currency }}</td>
+            <td>{{ payment.status_label }}</td>
+            <td>
+              {% if payment.status == "confirmed" %}
+                <a href="{% url 'billing:success' payment.id %}">{{ payment.gateway_ref }}</a>
+              {% elif payment.status == "failed" %}
+                <a href="{% url 'billing:failure' payment.id %}">{{ payment.gateway_ref }}</a>
+              {% else %}
+                <a href="{% url 'billing:pending' payment.id %}">{{ payment.gateway_ref }}</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  <p class="billing-links">
+    <a href="{% url 'billing:pricing' %}">Pricing</a>
+    ·
+    <a href="{% url 'billing:current' %}">Subscription</a>
+  </p>
+{% endblock %}

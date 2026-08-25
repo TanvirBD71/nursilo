@@ -1,0 +1,57 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:exams' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Exams" current_label=exam.code aria_label="Exams" %}
+<header class="page-header">
+  <h1>{{ exam.code }}</h1>
+  <p>{{ exam.title_key }} · {% include "components/status_badge.html" with label=exam.editorial_state tone="info" %}</p>
+  <p class="page-header-actions">
+    <a class="btn btn-ghost" href="{% url 'staff:exams' %}">Back to exams</a>
+  </p>
+</header>
+<section class="staff-action-card">
+  <h2>Edit definition</h2>
+  <form method="post" class="staff-form">
+    {% csrf_token %}
+    <input type="hidden" name="edit" value="1">
+    {% for field in form %}{% include "components/form_field.html" with field=field %}{% endfor %}
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+  </form>
+</section>
+<section class="staff-action-card">
+  <h2>Pool items</h2>
+  <ul>
+    {% for item in exam.items.all %}
+      <li>{{ item.question_id }} (order {{ item.sort_order }})</li>
+    {% empty %}
+      <li>No linked questions.</li>
+    {% endfor %}
+  </ul>
+  <form method="post" class="staff-form">
+    {% csrf_token %}
+    <input type="hidden" name="add_question" value="1">
+    <label for="id_question_id">Question ID</label>
+    <input id="id_question_id" name="question_id" required>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-secondary">Link question</button>
+    </div>
+  </form>
+</section>
+<section class="staff-action-card">
+  <h2>Workflow</h2>
+  {% if actions %}
+  <form method="post" class="staff-form">
+    {% csrf_token %}
+    <input type="hidden" name="workflow" value="1">
+    <select name="action" aria-label="Workflow action">{% for a in actions %}<option value="{{ a }}">{{ a }}</option>{% endfor %}</select>
+    <textarea name="notes" rows="2" aria-label="Notes"></textarea>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Apply</button>
+    </div>
+  </form>
+  {% endif %}
+</section>
+{% endblock %}

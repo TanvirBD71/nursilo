@@ -1,0 +1,9 @@
+{% if messages %}
+  <div class="feedback-region" role="region" aria-label="Status messages" aria-live="polite">
+    <ul class="feedback-list">
+      {% for message in messages %}
+        <li class="feedback-item" data-level="{{ message.tags|default:'info' }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}

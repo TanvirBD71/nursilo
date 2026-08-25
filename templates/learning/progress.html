@@ -1,0 +1,37 @@
+{% extends "layouts/student.html" %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block content %}
+  {% include "learning/partials/breadcrumbs.html" %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Real completion from your learning activity — never fabricated stats.</p>
+
+  <section class="section" aria-labelledby="continue-heading">
+    <h2 class="section-title" id="continue-heading">Continue Learning</h2>
+    {% if continue_learning.empty %}
+      {% include "components/empty_state.html" with title="No lesson in progress" message=continue_learning.message %}
+      <p><a class="btn btn-primary" href="{{ continue_learning.href }}">Browse courses</a></p>
+    {% else %}
+      <p>
+        Resume <strong>{{ continue_learning.lesson_title }}</strong>
+        {% if continue_learning.course_title %} in {{ continue_learning.course_title }}{% endif %}.
+      </p>
+      <p><a class="btn btn-primary" href="{{ continue_learning.href }}">Continue learning</a></p>
+    {% endif %}
+  </section>
+
+  <section class="section" aria-labelledby="courses-progress-heading">
+    <h2 class="section-title" id="courses-progress-heading">Course progress</h2>
+    {% if not courses %}
+      {% include "components/empty_state.html" with title="No courses available" message="Published courses will appear here with your real progress." %}
+    {% else %}
+      <ul class="learning-catalog-list">
+        {% for course in courses %}
+          <li class="learning-catalog-item">
+            <h3 class="section-title"><a href="{{ course.href }}">{{ course.title }}</a></h3>
+            {% include "learning/partials/progress.html" with progress=course.progress %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </section>
+{% endblock %}

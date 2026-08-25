@@ -1,0 +1,52 @@
+{% extends "layouts/staff.html" %}
+{% block title %}{{ page_heading }} — Nursilo Staff{% endblock %}
+{% block content %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="page-header-actions">
+    <a class="btn btn-primary" href="{% url 'staff:learning_create' 'course' %}">Create course</a>
+  </p>
+</header>
+<form method="get" class="filter-bar staff-filter" role="search">
+  <div class="filter-bar-grid">
+    <div class="form-field">
+      <label for="id_q">Search</label>
+      <input id="id_q" type="search" name="q" value="{{ q }}">
+    </div>
+    <div class="form-field">
+      <label for="id_state">State</label>
+      <select id="id_state" name="state">
+        <option value="">All</option>
+        {% for value,label in states %}
+          <option value="{{ value }}" {% if state == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="filter-actions">
+    <button type="submit" class="btn btn-primary">Apply</button>
+    <a class="btn btn-secondary" href="{% url 'staff:learning' %}">Reset</a>
+  </div>
+</form>
+<div class="table-wrap" role="region" aria-label="Courses" tabindex="0">
+  <table class="data-table">
+    <thead><tr><th scope="col">Title</th><th scope="col">State</th><th scope="col">Archived</th></tr></thead>
+    <tbody>
+      {% for obj in page_obj %}
+      <tr>
+        <td>
+          <a href="{% url 'staff:learning_detail' 'course' obj.id %}">
+            {% with t=obj.translations.all|first %}{{ t.title|default:obj.id }}{% endwith %}
+          </a>
+        </td>
+        <td>{% include "components/status_badge.html" with label=obj.editorial_state tone="info" %}</td>
+        <td>{{ obj.is_archived|yesno:"Yes,No" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3">No courses.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "staff/_pagination.html" %}
+{% endblock %}

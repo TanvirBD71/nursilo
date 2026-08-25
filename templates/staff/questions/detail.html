@@ -1,0 +1,190 @@
+{% extends "layouts/staff.html" %}
+{% block title %}Question — Nursilo Staff{% endblock %}
+{% block content %}
+{% include "components/breadcrumbs.html" with breadcrumbs=question_breadcrumbs aria_label="Question" %}
+<header class="page-header">
+  <h1>Question</h1>
+  <p>{% include "components/status_badge.html" with label=question.editorial_state tone="info" %}</p>
+  <p><a class="btn btn-ghost" href="{% url 'staff:questions' %}">Back to question bank</a></p>
+</header>
+<article class="staff-action-card">
+  <h2>Stem</h2>
+  <p>{{ stem }}</p>
+  <p class="tagline">Type: {{ question.question_type }} · Difficulty: {{ question.difficulty|default:"unclassified" }} · Code: {{ question.question_code|default:"—" }}</p>
+  {% if answer_key.scenario %}
+  <h3>Scenario</h3>
+  <p>{{ answer_key.scenario }}</p>
+  {% endif %}
+</article>
+<section class="staff-action-card" aria-labelledby="key">
+  <h2 id="key">Answer key (staff only)</h2>
+  <p class="tagline">Never shown to students before submission.</p>
+  {% if answer_key.options %}
+  <ol>
+    {% for opt in answer_key.options %}
+    <li>{{ opt.key|upper }}. {{ opt.label }}{% if question.question_type == "true_false" %} — {% if opt.is_correct %}True{% else %}False{% endif %}{% elif opt.is_correct %} — correct{% endif %}</li>
+    {% endfor %}
+  </ol>
+  {% endif %}
+  {% if answer_key.explanation %}<p><strong>Explanation:</strong> {{ answer_key.explanation }}</p>{% endif %}
+</section>
+{% if duplicate_hits %}
+<section class="duplicate-warning" aria-labelledby="dup">
+  <h2 id="dup">Possible duplicate</h2>
+  <p class="tagline">Warning only — nothing is deleted or merged.</p>
+  <ul>
+    {% for hit in duplicate_hits %}
+    <li>
+      <strong>{{ hit.match_kind|title }}</strong> — {{ hit.reason }}
+      <br>{{ hit.other_code|default:hit.other_id }}: {{ hit.other_stem }}
+      <p class="filter-actions">
+        <a class="btn btn-secondary" href="{% url 'staff:question_detail' hit.other_id %}">Compare</a>
+        <form method="post" class="staff-inline-form">
+          {% csrf_token %}
+          <input type="hidden" name="intent" value="dismiss_duplicate">
+          <input type="hidden" name="other_id" value="{{ hit.other_id }}">
+          <button type="submit" class="btn btn-ghost">Keep both / Dismiss</button>
+        </form>
+      </p>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+<section class="staff-action-card" aria-labelledby="meta">
+  <h2 id="meta">Classification</h2>
+  {% if suggestion %}
+  <div class="suggestion-panel">
+    {% if suggestion.confident %}
+      <p><strong>Blueprint assistance</strong> — suggestion only. Never assigned unless you accept it.</p>
+      <p>{{ suggestion.reason }}</p>
+      <ul>
+        {% if suggestion.category_name %}<li>Category: {{ suggestion.category_name }}</li>{% endif %}
+        {% if suggestion.cognitive_label %}<li>Cognitive: {{ suggestion.cognitive_label }}</li>{% endif %}
+      </ul>
+      <form method="post" class="filter-actions">
+        {% csrf_token %}
+        <input type="hidden" name="intent" value="apply_suggestion">
+        {% if suggestion.category_id %}
+          {% if question.blueprint_category_id %}
+            <p class="tagline">Category already classified. Accepting a suggestion will not overwrite it.</p>
+          {% else %}
+            <label class="filter-check"><input type="checkbox" name="suggestion_fields" value="category"> Accept category</label>
+          {% endif %}
+        {% endif %}
+        {% if suggestion.cognitive_level %}
+          {% if question.cognitive_level %}
+            <p class="tagline">Cognitive level already classified. Accepting a suggestion will not overwrite it.</p>
+          {% else %}
+            <label class="filter-check"><input type="checkbox" name="suggestion_fields" value="cognitive"> Accept cognitive</label>
+          {% endif %}
+        {% endif %}
+        <button type="submit" class="btn btn-secondary">Apply selected suggestion</button>
+      </form>
+      <form method="post" class="filter-actions">
+        {% csrf_token %}
+        <input type="hidden" name="intent" value="reject_suggestion">
+        <button type="submit" class="btn btn-ghost">Reject suggestion</button>
+      </form>
+      <p class="tagline">Leave uncertain items flagged for review. You may ignore this and classify below. Rejecting does not assign anything.</p>
+    {% else %}
+      <p><strong>Blueprint assistance:</strong> {{ suggestion.reason }}. Kept as needs review until you classify it.</p>
+    {% endif %}
+  </div>
+  {% endif %}
+  <dl class="detail-list">
+    <dt>Question code</dt><dd>{{ question.question_code|default:"—" }}</dd>
+    <dt>Cognitive level</dt><dd>{{ question.get_cognitive_level_display|default:"unclassified" }}</dd>
+    <dt>Blueprint category</dt><dd>{{ question.blueprint_category.name|default:"—" }}</dd>
+    <dt>Blueprint competency</dt><dd>{{ question.blueprint_competency.text|default:"—" }}</dd>
+    <dt>Subject</dt><dd>{{ question.content_subject|default:"—" }}</dd>
+    <dt>Topic</dt><dd>{{ question.content_topic|default:"—" }}</dd>
+    <dt>Scenario-based</dt><dd>{{ question.scenario_based|yesno }}</dd>
+    <dt>Needs review</dt><dd>{{ question.needs_review|yesno }}</dd>
+    <dt>Classification</dt>
+    <dd>
+      {% if question.classification_origin == "suggested" %}Suggested — not staff-approved
+      {% elif question.classification_origin == "approved" %}Approved by staff
+      {% else %}Unspecified (import or legacy)
+      {% endif %}
+    </dd>
+  </dl>
+  <form method="post" class="staff-form">
+    {% csrf_token %}
+    <input type="hidden" name="intent" value="classification">
+    <label for="id_content_subject">Subject</label>
+    {{ classification_form.content_subject }}
+    <label for="id_content_topic">Topic</label>
+    {{ classification_form.content_topic }}
+    <label for="id_cognitive_level">Cognitive level</label>
+    <p class="tagline">Recall, Understanding, or Application. Unclassified stays needs review until you choose.</p>
+    {{ classification_form.cognitive_level }}
+    <label for="id_difficulty">Difficulty</label>
+    {{ classification_form.difficulty }}
+    <label for="id_blueprint_category_id">Blueprint category</label>
+    <select id="id_blueprint_category_id" name="blueprint_category_id" data-category-select>
+      <option value="">Unclassified</option>
+      {% for cat in blueprint_categories %}
+      <option value="{{ cat.id }}" {% if question.blueprint_category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+      {% endfor %}
+    </select>
+    <label for="id_blueprint_competency_id">Blueprint competency</label>
+    <select id="id_blueprint_competency_id" name="blueprint_competency_id" data-competency-select>
+      <option value="">Unclassified</option>
+      {% for comp in blueprint_competencies %}
+      <option value="{{ comp.id }}" data-category-id="{{ comp.category_id }}" {% if question.blueprint_competency_id == comp.id %}selected{% endif %}>{{ comp.category.name }} / C{{ comp.number }}</option>
+      {% endfor %}
+    </select>
+    <label class="filter-check">{{ classification_form.scenario_based }} Scenario-based</label>
+    <label class="filter-check">{{ classification_form.needs_review }} Needs review</label>
+    <button type="submit" class="btn btn-primary">Save classification</button>
+  </form>
+</section>
+<section class="staff-action-card" aria-labelledby="rev">
+  <h2 id="rev">Review state</h2>
+  <form method="post" class="staff-form">
+    {% csrf_token %}
+    <input type="hidden" name="intent" value="review">
+    <label class="filter-check">{{ review_form.needs_review }} Flag for admin review</label>
+    <button type="submit" class="btn btn-secondary">Update review state</button>
+  </form>
+</section>
+{% if validation_problems %}
+<section class="staff-action-card" aria-labelledby="val">
+  <h2 id="val">Validation</h2>
+  <ul>
+    {% for problem in validation_problems %}<li>{{ problem }}</li>{% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% if source_view %}
+<section class="staff-action-card" aria-labelledby="src">
+  <h2 id="src">Source (admin-only)</h2>
+  <p class="tagline">Never shown to students.</p>
+  <dl class="detail-list">
+    <dt>Source type</dt><dd>{{ question.get_source_type_display }}</dd>
+    <dt>Source name</dt><dd>{{ source_view.source_name|default:"—" }}</dd>
+    <dt>Source page</dt><dd>{{ source_view.source_page|default:"—" }}</dd>
+    <dt>Source reference</dt><dd>{{ source_view.source_reference|default:"—" }}</dd>
+  </dl>
+</section>
+{% endif %}
+<section class="staff-action-card" aria-labelledby="wf">
+  <h2 id="wf">Workflow</h2>
+  {% if actions %}
+  <form method="post" class="staff-form">
+    {% csrf_token %}
+    <input type="hidden" name="intent" value="workflow">
+    <label for="id_action">Action</label>
+    <select id="id_action" name="action">
+      {% for a in actions %}<option value="{{ a }}">{{ a }}</option>{% endfor %}
+    </select>
+    <label for="id_notes">Notes</label>
+    <textarea id="id_notes" name="notes" rows="2"></textarea>
+    <button type="submit" class="btn btn-primary">Apply</button>
+  </form>
+  {% else %}
+  <p class="tagline">No transitions available.</p>
+  {% endif %}
+</section>
+{% endblock %}

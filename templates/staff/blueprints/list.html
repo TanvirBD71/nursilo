@@ -1,0 +1,29 @@
+{% extends "layouts/staff.html" %}
+{% block title %}Exam blueprints — Nursilo Staff{% endblock %}
+{% block content %}
+{% url 'staff:questions' as parent_href %}
+{% include "components/breadcrumbs.html" with parent_href=parent_href parent_label="Question bank" current_label=page_heading aria_label="Blueprints" %}
+<header class="page-header">
+  <h1>{{ page_heading }}</h1>
+  <p class="page-header-actions">
+    <a class="btn btn-ghost" href="{% url 'staff:questions' %}">Back to question bank</a>
+  </p>
+</header>
+<div class="table-wrap" role="region" aria-label="Blueprints" tabindex="0">
+  <table class="data-table">
+    <thead><tr><th scope="col">Name</th><th scope="col">Version</th><th scope="col">Total</th><th scope="col">Active</th></tr></thead>
+    <tbody>
+      {% for bp in blueprints %}
+      <tr>
+        <td><a href="{% url 'staff:blueprint_detail' bp.id %}">{{ bp.name }}</a></td>
+        <td>{{ bp.version_label|default:"—" }}</td>
+        <td>{{ bp.total_questions }}</td>
+        <td>{{ bp.is_active|yesno }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">No blueprints.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

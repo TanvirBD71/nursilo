@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block body_class %}layout-shell layout-error{% endblock %}
+{% block header %}
+<header class="layout-error-header">
+  {% url 'home' as brand_href %}
+  {% include "components/site_brand.html" with brand_href=brand_href %}
+</header>
+{% endblock %}
+{% block footer %}
+<footer class="layout-error-footer">
+  <p>Nursilo — Learn. Practice. Succeed.</p>
+</footer>
+{% endblock %}

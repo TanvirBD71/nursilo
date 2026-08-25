@@ -1,0 +1,69 @@
+{% extends "layouts/student.html" %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block content %}
+  {% include "learning/partials/breadcrumbs.html" %}
+  <header class="lesson-header">
+    <h1 class="page-title">{{ page_heading }}</h1>
+    {% if is_completed %}
+      {% include "components/status_badge.html" with label="Completed" tone="success" %}
+    {% endif %}
+  </header>
+
+  <article class="lesson-body reading-measure">
+    {% if body %}
+      <div class="lesson-content">{{ body|linebreaks }}</div>
+    {% else %}
+      {% include "components/empty_state.html" with title="No lesson text yet" message="This published lesson does not have reading content in your language yet." %}
+    {% endif %}
+  </article>
+
+  <section class="lesson-materials" aria-labelledby="materials-heading">
+    <h2 class="section-title" id="materials-heading">Learning materials</h2>
+    {% if materials_empty %}
+      {% include "components/empty_state.html" with title="No materials" message="No published learning materials are linked to this lesson." %}
+    {% else %}
+      <ul class="material-list">
+        {% for material in materials %}
+          <li class="material-item">
+            <h3 class="material-title">
+              <a href="{{ material.href }}">{{ material.title }}</a>
+              {% if material.is_premium %}
+                {% include "components/status_badge.html" with label="Premium" tone="premium" %}
+              {% endif %}
+            </h3>
+            {% if material.locked %}
+              {% include "components/unavailable_state.html" with title="Premium required" message=material.lock_message %}
+            {% elif material.body %}
+              <div class="material-excerpt reading-measure">{{ material.body|truncatechars:280|linebreaks }}</div>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </section>
+
+  <section class="lesson-completion" aria-labelledby="completion-heading">
+    <h2 class="section-title" id="completion-heading">Progress</h2>
+    {% if is_completed %}
+      <p role="status">You have completed this lesson.</p>
+    {% else %}
+      <form method="post" action="{% url 'learning:lesson_complete' lesson_id=lesson_id %}" class="stack-form">
+        {% csrf_token %}
+        <input type="hidden" name="confirm" value="true">
+        <button type="submit" class="btn btn-primary">Mark lesson complete</button>
+      </form>
+    {% endif %}
+  </section>
+
+  <nav class="lesson-nav" aria-label="Lesson navigation">
+    {% if prev_lesson %}
+      <a class="btn btn-secondary" href="{{ prev_lesson.href }}">Previous: {{ prev_lesson.title }}</a>
+    {% endif %}
+    {% if next_lesson %}
+      <a class="btn btn-secondary" href="{{ next_lesson.href }}">Next: {{ next_lesson.title }}</a>
+    {% endif %}
+    {% if not prev_lesson and not next_lesson %}
+      <a class="btn btn-secondary" href="{% url 'learning:catalog' %}">Back to courses</a>
+    {% endif %}
+  </nav>
+{% endblock %}

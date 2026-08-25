@@ -1,0 +1,82 @@
+{% extends "layouts/student.html" %}
+{% load static %}
+{% block title %}{{ page_heading }} — Nursilo{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/library.css' %}">
+{% endblock %}
+{% block content %}
+  {% include "library/partials/breadcrumbs.html" %}
+  <article class="library-detail">
+    <header class="library-detail-header">
+      {% if book.cover_href %}
+        <img class="library-cover" src="{{ book.cover_href }}" alt="" width="160" height="220">
+      {% endif %}
+      <div>
+        <h1 class="page-title">{{ page_heading }}</h1>
+        {% if book.author_name %}
+          <p class="library-meta">{{ book.author_name }}{% if book.edition %} · {{ book.edition }}{% endif %}</p>
+        {% endif %}
+        {% if book.publisher %}
+          <p class="library-meta">Publisher: {{ book.publisher }}</p>
+        {% endif %}
+        {% if book.category %}
+          <p class="library-meta">Category: {{ book.category }}</p>
+        {% endif %}
+        <p class="library-access-row">
+          {% if locked %}
+            {% include "components/status_badge.html" with label="Premium — locked" tone="premium" %}
+          {% elif book.is_premium %}
+            {% include "components/status_badge.html" with label="Premium" tone="premium" %}
+          {% else %}
+            {% include "components/status_badge.html" with label="Free" tone="success" %}
+          {% endif %}
+        </p>
+      </div>
+    </header>
+
+    {% if blurb %}
+      <p class="library-blurb">{{ blurb }}</p>
+    {% endif %}
+
+    {% if locked %}
+      {% include "components/unavailable_state.html" with title="Premium required" message=lock_message %}
+      <p><a class="btn btn-secondary" href="{% url 'portal:subscription' %}">View subscription</a></p>
+    {% else %}
+      <p class="library-actions">
+        {% if can_read %}
+          <a class="btn btn-primary" href="{{ book.reader_href }}">Open reader</a>
+        {% endif %}
+      </p>
+    {% endif %}
+
+    <section class="library-detail-actions" aria-label="Book actions">
+      <form method="post" action="{% url 'library:bookmark_toggle' book_id=book.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit" class="btn btn-secondary">
+          {% if bookmarked %}Remove bookmark{% else %}Add bookmark{% endif %}
+        </button>
+      </form>
+    </section>
+
+    <section aria-labelledby="formats-heading">
+      <h2 id="formats-heading" class="section-title">Available formats</h2>
+      {% if assets_empty %}
+        {% include "components/empty_state.html" with title="No formats yet" message="This published book does not have downloadable or readable assets attached yet." %}
+      {% else %}
+        <ul class="library-asset-list">
+          {% for asset in assets %}
+            <li>
+              <span class="library-meta">{{ asset.format|upper }}</span>
+              {% if asset.can_download %}
+                <a class="btn btn-secondary" href="{{ asset.download_href }}">Download</a>
+              {% else %}
+                <span class="library-meta">Download unavailable</span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </section>
+  </article>
+{% endblock %}

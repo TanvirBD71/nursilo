@@ -1,0 +1,13 @@
+<footer class="staff-footer">
+  <div class="staff-footer-inner">
+    <div class="footer-brand-block">
+      {% url 'staff:dashboard' as brand_href %}
+      {% include "components/site_brand.html" with brand_href=brand_href brand_text="Nursilo Staff" %}
+      <p class="tagline">Learn. Practice. Succeed.</p>
+    </div>
+    <p class="tagline">Staff console — server-side authorization is authoritative.</p>
+  </div>
+  <div class="footer-legal">
+    <p>&copy; {% now "Y" %} Nursilo. All rights reserved.</p>
+  </div>
+</footer>

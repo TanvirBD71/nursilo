@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block body_class %}layout-shell layout-reader{% endblock %}
+{% block extra_head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/library.css' %}">
+{% endblock %}
+{% block header %}
+  <header class="reader-shell-header">
+    <div class="reader-shell-inner">
+      {% url 'library:catalog' as brand_href %}
+      {% include "components/site_brand.html" with brand_href=brand_href %}
+      <p class="reader-shell-tagline">Reader</p>
+      <a class="btn btn-secondary" href="{{ detail_href|default:catalog_href }}">Exit reader</a>
+    </div>
+  </header>
+{% endblock %}
+{% block footer %}
+  <footer class="reader-shell-footer">
+    <div class="reader-shell-inner">
+      <p>Reading access is controlled on the server. Storage links alone never grant access.</p>
+    </div>
+  </footer>
+{% endblock %}

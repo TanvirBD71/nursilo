@@ -1,0 +1,35 @@
+{% extends "layouts/student.html" %}
+{% block title %}Pricing — Nursilo{% endblock %}
+{% block content %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">Annual Premium unlocks premium library books and premium features. One honest plan for V1 — no fake scarcity, urgency, or limited-time pressure.</p>
+
+  {% for plan in plans %}
+  <section class="dashboard-card section" aria-labelledby="plan-{{ plan.code }}">
+    <h2 class="section-title" id="plan-{{ plan.code }}">{{ plan.name }}</h2>
+    <p class="billing-price" aria-label="Price {{ plan.display_price }} per year">
+      <span class="billing-price__amount">{{ plan.display_price }}</span>
+      <span class="billing-price__period">/ year ({{ plan.duration_days }} days)</span>
+    </p>
+    <p>{{ plan.description }}</p>
+    <p>
+      {% if checkout_available %}
+        <a class="btn btn-primary" href="{% url 'billing:checkout' %}?plan_code={{ plan.code }}">Continue to checkout</a>
+      {% elif not email_verified %}
+        <span class="billing-note">Verify your email before checkout.</span>
+        <a class="btn btn-secondary" href="{% url 'accounts:resend_verification' %}">Verify email</a>
+      {% else %}
+        <span class="billing-note">Checkout is unavailable until the payment gateway is configured.</span>
+      {% endif %}
+    </p>
+  </section>
+  {% empty %}
+    {% include "components/empty_state.html" with title="No plans" message="No subscription plans are available right now." %}
+  {% endfor %}
+
+  <p class="billing-links">
+    <a href="{% url 'billing:current' %}">Current subscription</a>
+    ·
+    <a href="{% url 'billing:history' %}">Billing history</a>
+  </p>
+{% endblock %}

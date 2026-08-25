@@ -1,0 +1,86 @@
+{% extends "layouts/student.html" %}
+{% block title %}Dashboard — Nursilo{% endblock %}
+{% block content %}
+  <h1 class="page-title">{{ page_heading }}</h1>
+  <p class="page-lede">
+    Welcome{% if dashboard.profile.full_name %}, {{ dashboard.profile.full_name }}{% endif %}.
+    Continue learning from your last lesson, or open the course catalog.
+  </p>
+  <p class="dashboard-quick-actions">
+    <a class="btn btn-primary" href="{% url 'learning:catalog' %}">Browse courses</a>
+    <a class="btn btn-secondary" href="{% url 'assessment:entry' %}">Practice</a>
+    <a class="btn btn-secondary" href="{% url 'exams:catalog' %}">Exams</a>
+    <a class="btn btn-secondary" href="{% url 'library:catalog' %}">Library</a>
+  </p>
+
+  {% if not dashboard.has_any_learning_data %}
+    {% include "components/empty_state.html" with title="Your study feed is ready" message="Open Learn to browse published courses. Practice history and exam results will appear here when those modules are available." %}
+  {% endif %}
+
+  <div class="dashboard-grid" aria-label="Dashboard sections">
+    {% for section in dashboard.sections %}
+      <section class="dashboard-card section{% if section.key == 'continue_learning' %} dashboard-card--continue{% endif %}" aria-labelledby="dash-{{ section.key }}" data-section="{{ section.key }}">
+        <h2 class="section-title" id="dash-{{ section.key }}">{{ section.title }}</h2>
+
+        {% if not section.available %}
+          {% include "components/unavailable_state.html" with title=section.title message=section.unavailable_reason %}
+        {% elif section.key == "continue_learning" and section.data %}
+          {% if section.empty %}
+            {% include "components/empty_state.html" with title="No lesson in progress" message=section.data.message %}
+            <p><a class="btn btn-primary" href="{{ section.data.href }}">Browse courses</a></p>
+          {% else %}
+            <p>
+              Resume <strong>{{ section.data.lesson_title }}</strong>
+              {% if section.data.course_title %} in {{ section.data.course_title }}{% endif %}.
+            </p>
+            <p><a class="btn btn-primary" href="{{ section.data.href }}">Continue learning</a></p>
+          {% endif %}
+        {% elif section.key == "subscription" and section.data %}
+          <p>
+            Plan:
+            {% include "components/status_badge.html" with label=section.data.label tone=section.data.is_premium|yesno:"premium,free" %}
+          </p>
+          <p class="tagline">
+            {% if section.data.source == "default_free" %}
+              Showing Free by default. No subscription record has been created yet.
+            {% else %}
+              Status from your subscription record.
+            {% endif %}
+          </p>
+          <p><a class="btn btn-secondary" href="{% url 'portal:subscription' %}">View subscription</a></p>
+        {% elif section.key == "notifications" and section.data %}
+          {% if section.empty %}
+            {% include "components/empty_state.html" with title="No notifications" message="You have no notifications yet." %}
+          {% else %}
+            <p>{{ section.data.unread_count }} unread</p>
+            <ul class="notification-list">
+              {% for item in section.data.items %}
+                <li class="notification-item" data-read="{% if item.is_read %}true{% else %}false{% endif %}">
+                  <strong>{{ item.title }}</strong>
+                  <p>{{ item.body|truncatechars:140 }}</p>
+                </li>
+              {% endfor %}
+            </ul>
+            <p><a class="btn btn-secondary" href="{% url 'portal:notifications' %}">Open notifications</a></p>
+          {% endif %}
+        {% elif section.key == "bookmarks" and section.data %}
+          {% if section.empty %}
+            {% include "components/empty_state.html" with title="No bookmarks yet" message="Bookmark books from the library to see them here." %}
+            <p><a class="btn btn-secondary" href="{{ section.data.href }}">Open library bookmarks</a></p>
+          {% else %}
+            <ul class="notification-list">
+              {% for item in section.data.items %}
+                <li class="notification-item">
+                  <a href="{{ item.href }}"><strong>{{ item.title }}</strong></a>
+                </li>
+              {% endfor %}
+            </ul>
+            <p><a class="btn btn-secondary" href="{{ section.data.href }}">All library bookmarks</a></p>
+          {% endif %}
+        {% elif section.empty %}
+          {% include "components/empty_state.html" with title=section.title message="No data to show yet." %}
+        {% endif %}
+      </section>
+    {% endfor %}
+  </div>
+{% endblock %}
