@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 def _md5_hex(value: str) -> str:
-    return hashlib.md5(value.encode("utf-8")).hexdigest()
+    return hashlib.md5(value.encode("utf-8"), usedforsecurity=False).hexdigest()
 
 
 class SSLCommerzSandboxAdapter:
@@ -169,6 +169,8 @@ class SSLCommerzSandboxAdapter:
         )
 
     def _post_form(self, url: str, data: dict[str, str]) -> dict[str, Any]:
+        if not url.startswith(("http://", "https://")):
+            raise ValueError("Invalid scheme")
         encoded = urllib.parse.urlencode(data).encode("utf-8")
         req = urllib.request.Request(
             url,
@@ -176,14 +178,16 @@ class SSLCommerzSandboxAdapter:
             method="POST",
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
-        with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+        with urllib.request.urlopen(req, timeout=self.timeout) as resp:  # nosec B310
             body = resp.read().decode("utf-8")
         return json.loads(body)
 
     def _get_json(self, url: str, params: dict[str, str]) -> dict[str, Any]:
+        if not url.startswith(("http://", "https://")):
+            raise ValueError("Invalid scheme")
         full = f"{url}?{urllib.parse.urlencode(params)}"
         req = urllib.request.Request(full, method="GET")
-        with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+        with urllib.request.urlopen(req, timeout=self.timeout) as resp:  # nosec B310
             body = resp.read().decode("utf-8")
         return json.loads(body)
 
